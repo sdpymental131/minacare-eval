@@ -3,94 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แบบประเมิน 9Q และ 8Q - MindCare SDPY</title>
+  <title>แบบประเมินสุขภาพใจ - MindCare SDPY</title>
   <!-- โหลด LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <!-- Google Fonts: Prompt -->
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 15px; background-color: #f7f9fa; color: #333; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto; }
-    h2 { color: #1DB446; text-align: center; margin-bottom: 5px; }
-    h3 { color: #555; border-bottom: 2px solid #1DB446; padding-bottom: 5px; margin-top: 25px; }
-    p.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
-    .question-box { margin-bottom: 15px; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #eee; }
-    .options { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
-    label { font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    button { width: 100%; background: #1DB446; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-    button:disabled { background: #ccc; }
+    * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+    body { background-color: #f0f4f8; margin: 0; padding: 15px; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+    
+    .header { background: linear-gradient(135deg, #1DB446 0%, #108a33 100%); padding: 25px 20px; text-align: center; color: white; }
+    .header h2 { margin: 0; font-size: 22px; font-weight: 600; }
+    .header p { margin: 5px 0 0; font-size: 13px; opacity: 0.9; font-weight: 300; }
 
-    /* ดีไซน์ Pop-up Modal */
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-    .modal-content h3 { color: #1DB446; margin-top: 0; border: none; }
-    .score-badge { font-size: 20px; font-weight: bold; color: #333; background: #e8f5e9; padding: 10px; border-radius: 8px; margin: 15px 0; }
-    .feedback-box { text-align: left; background: #f9f9f9; padding: 12px; border-radius: 6px; font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.5; }
-    .close-btn { background: #1DB446; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+    .content { padding: 20px; }
+    .section-title { font-size: 16px; font-weight: 600; color: #1DB446; margin: 25px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8f5e9; display: flex; align-items: center; gap: 8px; }
+    .section-desc { font-size: 12px; color: #666; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 3px solid #1DB446; }
+
+    .question-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 12px; transition: all 0.2s ease; }
+    .question-card:focus-within { border-color: #1DB446; box-shadow: 0 0 0 3px rgba(29, 180, 70, 0.1); }
+    .question-title { font-size: 14px; font-weight: 500; color: #2d3748; margin-bottom: 10px; line-height: 1.4; }
+    
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .option-label { display: flex; align-items: center; padding: 8px 12px; background: #f8fafc; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+    .option-label:hover { background: #f1f5f9; }
+    .option-label input[type="radio"] { margin-right: 10px; accent-color: #1DB446; width: 16px; height: 16px; }
+
+    .btn-submit { width: 100%; background: #1DB446; color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 25px; box-shadow: 0 4px 12px rgba(29, 180, 70, 0.25); transition: background 0.2s; }
+    .btn-submit:hover { background: #159b3a; }
+    .btn-submit:disabled { background: #cbd5e1; box-shadow: none; }
+
+    /* Modal Pop-up UI */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 15px; }
+    .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: popIn 0.3s ease; }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    
+    .modal-icon { font-size: 40px; margin-bottom: 10px; }
+    .modal-title { font-size: 18px; font-weight: 600; color: #1DB446; margin-bottom: 15px; }
+    .score-container { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #166534; margin-bottom: 15px; }
+    .feedback-box { text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 13px; color: #334155; margin-bottom: 20px; line-height: 1.5; }
+    .close-btn { background: #1DB446; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <h2>MindCare SDPY</h2>
-  <p class="subtitle">แบบประเมินสุขภาพจิต (9Q และ 8Q)</p>
-  
-  <form id="evalForm">
-    <!-- ส่วนที่ 1: แบบประเมิน 9Q -->
-    <h3>ส่วนที่ 1: แบบประเมินอาการซึมเศร้า (9Q)</h3>
-    <p style="font-size: 13px; color: #666;">ในช่วง 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</p>
-    
-    <div id="q9-container"></div>
+<div class="container">
+  <div class="header">
+    <h2>MindCare SDPY</h2>
+    <p>แบบประเมินคัดกรองสุขภาพใจ (9Q & 8Q)</p>
+  </div>
 
-    <!-- ส่วนที่ 2: แบบประเมิน 8Q -->
-    <h3>ส่วนที่ 2: แบบประเมินความเสี่ยงต่อการฆ่าตัวตาย (8Q)</h3>
-    
-    <div id="q8-container"></div>
+  <div class="content">
+    <form id="evalForm">
+      <!-- ส่วนที่ 1: 9Q (ตามระบบ รพ.) -->
+      <div class="section-title">🌱 ส่วนที่ 1: แบบประเมินโรคซึมเศร้า (9Q)</div>
+      <div class="section-desc">ในช่วง 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</div>
+      <div id="q9-container"></div>
 
-    <button type="submit" id="submitBtn">ประเมินผลและส่งข้อมูล</button>
-  </form>
+      <!-- ส่วนที่ 2: 8Q (ตามระบบ รพ.) -->
+      <div class="section-title">🛡️ ส่วนที่ 2: แบบประเมินความเสี่ยงต่อการฆ่าตัวตาย (8Q)</div>
+      <div class="section-desc">ในช่วงที่ผ่านมา ท่านมีอาการหรือความคิดเหล่านี้หรือไม่?</div>
+      <div id="q8-container"></div>
+
+      <button type="submit" id="submitBtn" class="btn-submit">ส่งแบบประเมิน</button>
+    </form>
+  </div>
 </div>
 
-<!-- Modal Pop-up แสดงผลลัพธ์ -->
+<!-- Modal Pop-up สรุปผล -->
 <div id="resultModal" class="modal">
   <div class="modal-content">
-    <h3>📋 สรุปผลการประเมินของคุณ</h3>
-    <div class="score-badge" id="modalScoreText">คะแนนรวม: 0 คะแนน</div>
+    <div class="modal-icon">📋</div>
+    <div class="modal-title">สรุปผลการประเมิน</div>
+    <div class="score-container" id="modalScoreText">กำลังคำนวณ...</div>
     <div class="feedback-box" id="modalFeedbackText">-</div>
     <button class="close-btn" onclick="closeModalAndFinish()">รับทราบและปิดหน้าต่าง</button>
   </div>
 </div>
 
 <script>
-  // 🔴 1. ตั้งค่า LIFF ID และ Web App URL ของคุณที่นี่
+  // 🔴 อย่าลืมใส่ LIFF ID และ Web App URL ของคุณที่นี่
   const LIFF_ID = "YOUR_LIFF_ID"; 
   const GAS_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL"; 
 
   let userId = "";
   let finalDataPayload = null;
 
-  // รายการคำถาม 9Q
+  // ข้อคำถาม 9Q ตามภาพระบบโรงพยาบาลเป๊ะๆ
   const questions9Q = [
-    "1. เบื่อ ไม่ค่อยสนใจหรือเพลิดเพลินในการทำอะไร",
-    "2. ไม่สบายใจ ซึมเศร้า หรือท้อแท้",
+    "1. เบื่อไม่สนใจอยากทำอะไร",
+    "2. ไม่สนใจ ซึมเศร้า ท้อแท้",
     "3. หลับยาก หรือหลับๆ ตื่นๆ หรือหลับมากไป",
-    "4. เหนื่อยง่าย หรือไม่ค่อยมีแรง",
+    "4. เหนื่อยง่าย หรือ ไม่ค่อยมีแรง",
     "5. เบื่ออาหาร หรือกินมากเกินไป",
-    "6. รู้สึกไม่ดีกับตัวเอง คิดว่าตัวเองล้มเหลว หรือทำให้ตนเองและครอบครัวผิดหวัง",
-    "7. สมาธิไม่ดีเวลาทำอะไร เช่น ดูโทรทัศน์ ฟังวิทยุ หรือทำงานที่ต้องใช้ความจำ",
-    "8. พูดหรือทำอะไรช้ากว่าปกติจนคนอื่นสังเกตเห็นได้ หรือกระสับกระส่ายไม่สามารถอยู่นิ่งได้",
-    "9. คิดทำร้ายตนเอง หรือคิดว่าถ้าตาย  ๆ ไปเสียคงจะดี"
+    "6. รู้สึกไม่ดีกับตนเอง คิดว่าตนเองล้มเหลว หรือ ทำให้ตนเองหรือครอบครัวผิดหวัง",
+    "7. สมาธิไม่ดีเวลาทำอะไร เช่น ดูโทรทัศน์ ฟังวิทยุ หรือทำงานที่ต้องใช้ความตั้งใจ",
+    "8. พูดช้า ทำอะไรช้าจนคนอื่นสังเกตเห็นได้ หรือกระสับกระส่ายไม่สามารถอยู่นิ่งได้เหมือนที่เคยเป็น",
+    "9. คิดทำร้ายตนเอง หรือคิดว่าถ้าตายไปคงจะดี"
   ];
 
-  // รายการคำถาม 8Q (ตัวอย่างข้อสำคัญ)
+  // ข้อคำถาม 8Q ตามแบบฟอร์มโรงพยาบาล (9 ข้อ)
   const questions8Q = [
-    "10. ท่านเคยคิดอยากตาย หรือคิดว่าอยากตายไปเสียให้รู้แล้วรู้รอด ในช่วง 1 เดือนที่ผ่านมา",
-    "11. ท่านเคยคิดอยากจะทำร้ายตัวเอง หรือพยายามฆ่าตัวตาย ในช่วง 1 เดือนที่ผ่านมา"
+    { q: "1. คิดอยากตายหรือคิดว่าตายไปจะดีกว่า", w: 1 },
+    { q: "2. อยากทำร้ายตนเอง หรือทำให้ตนเองบาดเจ็บ", w: 2 },
+    { q: "3. คิดเกี่ยวกับการฆ่าตัวตาย", w: 3 },
+    { q: "4. คิดเกี่ยวกับการฆ่าตัวตาย และไม่สามารถควบคุมความอยากฆ่าตัวตายได้", w: 4 },
+    { q: "5. มีแผนการที่จะฆ่าตัวตาย", w: 5 },
+    { q: "6. ได้เตรียมการที่จะทำร้ายตนเองหรือเตรียมการจะฆ่าตัวตายโดยตั้งใจจะให้ตายจริงๆ", w: 6 },
+    { q: "7. ได้ทำให้ตนเองบาดเจ็บแต่ไม่ตั้งใจที่จะทำให้เสียชีวิต", w: 7 },
+    { q: "8. ได้พยายามฆ่าตัวตาย โดยคาดหวัง/ตั้งใจที่จะตาย", w: 8 },
+    { q: "9. ท่านเคยพยายามฆ่าตัวตาย", w: 9 }
   ];
 
-  const choices = [
-    { label: "ไม่มีเลย (0 คะแนน)", val: 0 },
-    { label: "เป็นบางวัน 1-7 วัน (1 คะแนน)", val: 1 },
-    { label: "เป็นบ่อย 8-13 วัน (2 คะแนน)", val: 2 },
-    { label: "เป็นทุกวัน เกือบทุกวัน (3 คะแนน)", val: 3 }
+  const choices9Q = [
+    { label: "ไม่มีเลย", val: 0 },
+    { label: "เป็นบางวัน (1-7 วัน)", val: 1 },
+    { label: "เป็นบ่อย (8-13 วัน)", val: 2 },
+    { label: "เป็นทุกวัน (เกือบทุกวัน)", val: 3 }
   ];
 
   window.onload = function() {
@@ -98,23 +128,24 @@
     initializeLiff();
   };
 
-  // สร้างฟอร์มคำถามอัตโนมัติ
   function renderQuestions() {
+    // เรนเดอร์ 9Q
     const q9Div = document.getElementById("q9-container");
-    questions9Q.forEach((q, index) => {
-      let html = `<div class="question-box"><p><b>${q}</b></p><div class="options">`;
-      choices.forEach(c => {
-        html += `<label><input type="radio" name="q${index+1}" value="${c.val}" required> ${c.label}</label>`;
+    questions9Q.forEach((qText, index) => {
+      let html = `<div class="question-card"><div class="question-title">${qText}</div><div class="options">`;
+      choices9Q.forEach(c => {
+        html += `<label class="option-label"><input type="radio" name="q9_${index+1}" value="${c.val}" required> ${c.label}</label>`;
       });
       html += `</div></div>`;
       q9Div.innerHTML += html;
     });
 
+    // เรนเดอร์ 8Q (ไม่มี / มี)
     const q8Div = document.getElementById("q8-container");
-    questions8Q.forEach((q, index) => {
-      let html = `<div class="question-box"><p><b>${q}</b></p><div class="options">`;
-      html += `<label><input type="radio" name="q8_${index+1}" value="0" required> ไม่เคย</label>`;
-      html += `<label><input type="radio" name="q8_${index+1}" value="1"> เคย</label>`;
+    questions8Q.forEach((item, index) => {
+      let html = `<div class="question-card"><div class="question-title">${item.q}</div><div class="options">`;
+      html += `<label class="option-label"><input type="radio" name="q8_${index+1}" value="0" required> ไม่มี</label>`;
+      html += `<label class="option-label"><input type="radio" name="q8_${index+1}" value="${item.w}"> มี</label>`;
       html += `</div></div>`;
       q8Div.innerHTML += html;
     });
@@ -125,65 +156,60 @@
       if (!liff.isLoggedIn()) {
         liff.login();
       } else {
-        liff.getProfile().then(profile => {
-          userId = profile.userId;
-        });
+        liff.getProfile().then(profile => { userId = profile.userId; });
       }
     }).catch(err => console.error("LIFF Init Error:", err));
   }
 
-  // กดส่งแบบประเมิน
   document.getElementById("evalForm").addEventListener("submit", function(e) {
     e.preventDefault();
     const btn = document.getElementById("submitBtn");
     btn.disabled = true;
-    btn.innerText = "กำลังประมวลผล...";
+    btn.innerText = "กำลังคำนวณผล...";
 
-    // คำนวณคะแนน 9Q
+    // คะแนน 9Q
     let score9Q = 0;
     for (let i = 1; i <= 9; i++) {
-      const val = document.querySelector(`input[name="q${i}"]:checked`).value;
-      score9Q += parseInt(val);
+      score9Q += parseInt(document.querySelector(`input[name="q9_${i}"]:checked`).value);
     }
 
-    // คำนวณคะแนน 8Q
+    // คะแนน 8Q
     let score8Q = 0;
-    for (let i = 1; i <= 2; i++) {
-      const val = document.querySelector(`input[name="q8_${i}"]:checked`).value;
-      score8Q += parseInt(val);
+    for (let i = 1; i <= questions8Q.length; i++) {
+      score8Q += parseInt(document.querySelector(`input[name="q8_${i}"]:checked`).value);
     }
 
-    // สรุปผลและคำแนะนำตามเกณฑ์
-    let feedback = "";
-    if (score9Q <= 7) {
-      feedback = "<b>เกณฑ์ปกติ:</b> ไม่มีอาการของโรคซึมเศร้า หรือมีอาการซึมเศร้ามนระดับน้อยมาก แนะนำให้ดูแลสุขภาพใจและพักผ่อนอย่างเพียงพอ";
-    } else if (score9Q <= 12) {
-      feedback = "<b>ซึมเศร้าระดับน้อย:</b> มีอาการซึมเศร้าระดับน้อย ควรหากิจกรรมผ่อนคลายทำ พูดคุยกับคนใกล้ชิด";
-    } else if (score9Q <= 18) {
-      feedback = "<b>ซึมเศร้าระดับปานกลาง:</b> มีอาการซึมเศร้าระดับปานกลาง แนะนำให้ปรึกษาบุคลากรทางแพทย์หรือผู้เชี่ยวชาญเพื่อรับคำแนะนำเพิ่มเติม";
-    } else {
-      feedback = "<b>ซึมเศร้าระดับรุนแรง:</b> มีอาการซึมเศร้าระดับรุนแรง ควรพบแพทย์หรือผู้เชี่ยวชาญด้านสุขภาพจิตโดยเร็วที่สุด";
-    }
+    // ประเมินผล 9Q
+    let feedback9Q = "";
+    if (score9Q < 7) feedback9Q = "ไม่มีอาการซึมเศร้า หรือมีระดับน้อยมาก";
+    else if (score9Q <= 12) feedback9Q = "มีอาการซึมเศร้าระดับน้อย";
+    else if (score9Q <= 18) feedback9Q = "มีอาการซึมเศร้าระดับปานกลาง";
+    else feedback9Q = "มีอาการซึมเศร้าระดับรุนแรง";
 
+    // ประเมินผล 8Q
+    let feedback8Q = "";
+    if (score8Q === 0) feedback8Q = "ไม่มีความเสี่ยงต่อการทำร้ายตนเอง";
+    else if (score8Q <= 8) feedback8Q = "มีความเสี่ยงต่อการทำร้ายตนเอง ระดับน้อย";
+    else if (score8Q <= 16) feedback8Q = "มีความเสี่ยงต่อการทำร้ายตนเอง ระดับปานกลาง";
+    else feedback8Q = "มีความเสี่ยงต่อการทำร้ายตนเอง ระดับรุนแรง";
+
+    let combinedFeedback = `<b>ผลประเมิน 9Q:</b> ${feedback9Q}<br><b>ผลประเมิน 8Q:</b> ${feedback8Q}`;
     if (score8Q > 0) {
-      feedback += "<br><br><span style='color: #d9534f; font-weight: bold;'>⚠️ ข้อสังเกต 8Q: พบความเสี่ยงต่อการทำร้ายตนเอง แนะนำให้ติดต่อสายด่วนสุขภาพจิต 1323 หรือปรึกษาเจ้าหน้าที่สาธารณสุขใกล้บ้านทันที</span>";
+      combinedFeedback += `<br><br><span style="color: #dc2626; font-weight: 600;">⚠️ ข้อแนะนำ: หากรู้สึกไม่สบายใจหรือต้องการผู้รับฟัง ปรึกษาสายด่วนสุขภาพจิต 1323 หรือทักแชทหาแอดมินได้ตลอดเวลาครับ</span>`;
     }
 
-    const summaryText = `9Q คะแนนรวม: ${score9Q} คะแนน<br>8Q คะแนนความเสี่ยง: ${score8Q} คะแนน`;
-
-    // แสดง Pop-up Modal พร้อมผลคะแนนและคำแนะนำ
-    document.getElementById("modalScoreText").innerHTML = summaryText;
-    document.getElementById("modalFeedbackText").innerHTML = feedback;
+    // แสดง Pop-up
+    document.getElementById("modalScoreText").innerHTML = `คะแนน 9Q: ${score9Q} | คะแนน 8Q: ${score8Q}`;
+    document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // เตรียมแพย์โหลดส่งหลังบ้าน
     finalDataPayload = {
       userId: userId,
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
-      feedback: feedback.replace(/<[^>]*>?/gm, '') // ล้างแท็ก HTML ออกสำหรับบันทึกข้อความ
+      feedback: `9Q: ${feedback9Q} | 8Q: ${feedback8Q}`
     };
 
-    // ส่งข้อมูลไป Google Sheets
+    // ส่งเข้า Sheets
     try {
       fetch(GAS_WEB_APP_URL, {
         method: "POST",
@@ -191,40 +217,34 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalDataPayload)
       });
-    } catch (err) {
-      console.error("Sheet saving error:", err);
-    }
+    } catch (err) { console.error("Sheets Error:", err); }
   });
 
-  // ปิด Pop-up และส่งข้อความเข้าแชท LINE
   async function closeModalAndFinish() {
     document.getElementById("resultModal").style.display = "none";
-
     if (liff.isInClient() && finalDataPayload) {
       try {
-        await liff.sendMessages([
-          {
-            type: "flex",
-            altText: "ผลการประเมิน 9Q และ 8Q ของคุณ",
-            contents: {
-              type: "bubble",
-              body: {
-                type: "box",
-                layout: "vertical",
-                contents: [
-                  { type: "text", text: "📋 สรุปผลประเมิน 9Q / 8Q", weight: "bold", size: "md", color: "#1DB446" },
-                  { type: "text", text: "คะแนน: " + finalDataPayload.score, size: "sm", margin: "md", weight: "bold" },
-                  { type: "separator", margin: "md" },
-                  { type: "text", text: "คำแนะนำ:", weight: "bold", size: "sm", margin: "md", color: "#555555" },
-                  { type: "text", text: finalDataPayload.feedback, size: "xs", wrap: true, color: "#666666", margin: "sm" }
-                ]
-              }
+        await liff.sendMessages([{
+          type: "flex",
+          altText: "สรุปผลการประเมินสุขภาพใจ MindCare SDPY",
+          contents: {
+            type: "bubble",
+            body: {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                { type: "text", text: "🌿 สรุปผลประเมิน MindCare", weight: "bold", size: "md", color: "#1DB446" },
+                { type: "text", text: "ระดับคะแนน: " + finalDataPayload.score, size: "sm", margin: "md", weight: "bold" },
+                { type: "separator", margin: "md" },
+                { type: "text", text: finalDataPayload.feedback, size: "xs", wrap: true, color: "#475569", margin: "md" }
+              ]
             }
           }
-        ]);
+        }]);
         liff.closeWindow();
       } catch (err) {
         alert("ส่งข้อความเข้าแชทไม่สำเร็จ: " + err.message);
+        liff.closeWindow();
       }
     } else {
       liff.closeWindow();
