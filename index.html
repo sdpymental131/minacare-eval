@@ -56,12 +56,12 @@
 
   <div class="content">
     <form id="evalForm">
-      <!-- ส่วนที่ 1: 9Q (ตามระบบ รพ.) -->
+      <!-- ส่วนที่ 1: 9Q -->
       <div class="section-title">🌱 ส่วนที่ 1: แบบประเมินโรคซึมเศร้า (9Q)</div>
       <div class="section-desc">ในช่วง 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</div>
       <div id="q9-container"></div>
 
-      <!-- ส่วนที่ 2: 8Q (ตามระบบ รพ.) -->
+      <!-- ส่วนที่ 2: 8Q -->
       <div class="section-title">🛡️ ส่วนที่ 2: แบบประเมินความเสี่ยงต่อการฆ่าตัวตาย (8Q)</div>
       <div class="section-desc">ในช่วงที่ผ่านมา ท่านมีอาการหรือความคิดเหล่านี้หรือไม่?</div>
       <div id="q8-container"></div>
@@ -90,7 +90,7 @@
   let userId = "";
   let finalDataPayload = null;
 
-  // ข้อคำถาม 9Q ตามภาพระบบโรงพยาบาลเป๊ะๆ
+  // ข้อคำถาม 9Q ตามระบบโรงพยาบาล
   const questions9Q = [
     "1. เบื่อไม่สนใจอยากทำอะไร",
     "2. ไม่สนใจ ซึมเศร้า ท้อแท้",
@@ -129,7 +129,6 @@
   };
 
   function renderQuestions() {
-    // เรนเดอร์ 9Q
     const q9Div = document.getElementById("q9-container");
     questions9Q.forEach((qText, index) => {
       let html = `<div class="question-card"><div class="question-title">${qText}</div><div class="options">`;
@@ -140,7 +139,6 @@
       q9Div.innerHTML += html;
     });
 
-    // เรนเดอร์ 8Q (ไม่มี / มี)
     const q8Div = document.getElementById("q8-container");
     questions8Q.forEach((item, index) => {
       let html = `<div class="question-card"><div class="question-title">${item.q}</div><div class="options">`;
@@ -167,49 +165,62 @@
     btn.disabled = true;
     btn.innerText = "กำลังคำนวณผล...";
 
-    // คะแนน 9Q
+    // 1. คำนวณคะแนน 9Q
     let score9Q = 0;
     for (let i = 1; i <= 9; i++) {
       score9Q += parseInt(document.querySelector(`input[name="q9_${i}"]:checked`).value);
     }
 
-    // คะแนน 8Q
+    // 2. คำนวณคะแนน 8Q
     let score8Q = 0;
     for (let i = 1; i <= questions8Q.length; i++) {
       score8Q += parseInt(document.querySelector(`input[name="q8_${i}"]:checked`).value);
     }
 
-    // ประเมินผล 9Q
-    let feedback9Q = "";
-    if (score9Q < 7) feedback9Q = "ไม่มีอาการซึมเศร้า หรือมีระดับน้อยมาก";
-    else if (score9Q <= 12) feedback9Q = "มีอาการซึมเศร้าระดับน้อย";
-    else if (score9Q <= 18) feedback9Q = "มีอาการซึมเศร้าระดับปานกลาง";
-    else feedback9Q = "มีอาการซึมเศร้าระดับรุนแรง";
+    // 3. แปลผล 9Q ตามเกณฑ์ รพ.
+    let level9Q = "";
+    if (score9Q < 7) level9Q = "ปกติ (1B0260)";
+    else if (score9Q <= 12) level9Q = "ซึมเศร้าระดับน้อย (1B0261)";
+    else if (score9Q <= 18) level9Q = "ซึมเศร้าระดับปานกลาง (1B0262)";
+    else level9Q = "ซึมเศร้าระดับรุนแรง (1B0263)";
 
-    // ประเมินผล 8Q
-    let feedback8Q = "";
-    if (score8Q === 0) feedback8Q = "ไม่มีความเสี่ยงต่อการทำร้ายตนเอง";
-    else if (score8Q <= 8) feedback8Q = "มีความเสี่ยงต่อการทำร้ายตนเอง ระดับน้อย";
-    else if (score8Q <= 16) feedback8Q = "มีความเสี่ยงต่อการทำร้ายตนเอง ระดับปานกลาง";
-    else feedback8Q = "มีความเสี่ยงต่อการทำร้ายตนเอง ระดับรุนแรง";
+    // 4. แปลผล 8Q ตามเกณฑ์ รพ. (เขียว เหลือง แดง)
+    let level8Q = "";
+    let statusColor = "";
+    let adviceText = "";
 
-    let combinedFeedback = `<b>ผลประเมิน 9Q:</b> ${feedback9Q}<br><b>ผลประเมิน 8Q:</b> ${feedback8Q}`;
-    if (score8Q > 0) {
-      combinedFeedback += `<br><br><span style="color: #dc2626; font-weight: 600;">⚠️ ข้อแนะนำ: หากรู้สึกไม่สบายใจหรือต้องการผู้รับฟัง ปรึกษาสายด่วนสุขภาพจิต 1323 หรือทักแชทหาแอดมินได้ตลอดเวลาครับ</span>`;
+    if (score8Q === 0) {
+      level8Q = "ไม่มีแนวโน้มการฆ่าตัวตาย (1B0270)";
+      statusColor = "🟢 เขียว (ปกติ)";
+      adviceText = "ไม่มีความเสี่ยงต่อการทำร้ายตนเอง แนะนำดูแลสุขภาพใจและพักผ่อนให้เพียงพอครับ";
+    } else if (score8Q <= 8) {
+      level8Q = "มีแนวโน้มที่จะฆ่าตัวตายระดับน้อย (1B0271)";
+      statusColor = "🟡 เหลือง (เสี่ยงน้อย)";
+      adviceText = "มีความเสี่ยงระดับน้อย ควรพูดคุยระบายความร้อนใจกับคนที่ไว้ใจ หรือทำกิจกรรมผ่อนคลาย";
+    } else if (score8Q <= 16) {
+      level8Q = "มีแนวโน้มที่จะฆ่าตัวตายระดับปานกลาง (1B0272)";
+      statusColor = "🟠 ส้ม/เหลืองเข้ม (เสี่ยงปานกลาง)";
+      adviceText = "มีความเสี่ยงระดับปานกลาง แนะนำให้ปรึกษาบุคลากรสาธารณสุขใกล้บ้านเพื่อรับคำแนะนำเพิ่มเติม";
+    } else {
+      level8Q = "มีแนวโน้มที่จะฆ่าตัวตายระดับรุนแรง (1B0273)";
+      statusColor = "🔴 แดง (เสี่ยงรุนแรง)";
+      adviceText = "⚠️ มีความเสี่ยงระดับรุนแรง แนะนำให้พบแพทย์หรือผู้เชี่ยวชาญด้านสุขภาพจิตทันที หรือติดต่อสายด่วนสุขภาพจิต 1323";
     }
 
-    // แสดง Pop-up
-    document.getElementById("modalScoreText").innerHTML = `คะแนน 9Q: ${score9Q} | คะแนน 8Q: ${score8Q}`;
+    let combinedFeedback = `<b>ผลประเมิน 9Q:</b> ${level9Q} (${score9Q} คะแนน)<br><b>ผลประเมิน 8Q:</b> ${level8Q} (${score8Q} คะแนน)<br><br><b>ระดับความรุนแรง:</b> ${statusColor}<br><b>คำแนะนำ:</b> ${adviceText}`;
+
+    // แสดง Pop-up Modal
+    document.getElementById("modalScoreText").innerHTML = `คะแนนรวม 9Q: ${score9Q} | 8Q: ${score8Q}`;
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
     finalDataPayload = {
       userId: userId,
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
-      feedback: `9Q: ${feedback9Q} | 8Q: ${feedback8Q}`
+      feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`
     };
 
-    // ส่งเข้า Sheets
+    // ส่งข้อมูลไป Google Sheets
     try {
       fetch(GAS_WEB_APP_URL, {
         method: "POST",
