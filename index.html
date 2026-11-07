@@ -86,8 +86,6 @@
   const LIFF_ID = "2012444081-koBK4ZLP"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
-  let userDisplayName = "ทดสอบผ่านเว็บ";
-  let userId = "";
   let finalDataPayload = null;
 
   const questions9Q = [
@@ -148,26 +146,34 @@
   }
 
   function initializeLiff() {
-    liff.init({ liffId: LIFF_ID }).then(async () => {
+    liff.init({ liffId: LIFF_ID }).then(() => {
       if (!liff.isLoggedIn()) {
         liff.login();
-      } else {
-        try {
-          const profile = await liff.getProfile();
-          userDisplayName = profile.displayName;
-          userId = profile.userId;
-        } catch (err) {
-          console.error("Get Profile Error:", err);
-        }
       }
     }).catch(err => console.error("LIFF Init Error:", err));
   }
 
-  document.getElementById("evalForm").addEventListener("submit", function(e) {
+  document.getElementById("evalForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     const btn = document.getElementById("submitBtn");
     btn.disabled = true;
-    btn.innerText = "กำลังคำนวณผล...";
+    btn.innerText = "กำลังประมวลผล...";
+
+    let userName = "ไม่ระบุชื่อ";
+    let userId = "ไม่ระบุ ID";
+
+    // ดึงข้อมูลผู้ใช้จาก ID Token ทันทีเมื่อกดส่ง (รวดเร็วและแม่นยำ ไม่ต้องรอโหลดโปรไฟล์แยก)
+    try {
+      if (liff.isLoggedIn()) {
+        const idToken = liff.getDecodedIDToken();
+        if (idToken) {
+          userId = idToken.sub || "ไม่ระบุ ID";
+          userName = idToken.name || "ไม่ระบุชื่อ";
+        }
+      }
+    } catch (err) {
+      console.error("Get ID Token Error:", err);
+    }
 
     let score9Q = 0;
     for (let i = 1; i <= 9; i++) {
@@ -218,8 +224,8 @@
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // จัดรูปแบบรวมชื่อและ User ID ส่งไปบันทึกตรงๆ
-    const formattedUser = userDisplayName + " (" + (userId || "ไม่ระบุ ID") + ")";
+    // จัดรูปแบบชื่อและ User ID รวมกันในรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID)
+    const formattedUser = `${userName} (${userId})`;
 
     finalDataPayload = {
       userId: formattedUser, 
