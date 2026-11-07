@@ -83,7 +83,7 @@
 </div>
 
 <script>
-  // 🔴 อย่าลืมใส่ LIFF ID และ Web App URL ของคุณที่นี่
+  // LIFF ID และ Web App URL ของคุณ
   const LIFF_ID = "YOUR_LIFF_ID"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
@@ -173,14 +173,12 @@
       score8Q += parseInt(document.querySelector(`input[name="q8_${i}"]:checked`).value);
     }
 
-    // แปลผล 9Q (ตัดรหัส รพ. ออก)
     let level9Q = "";
     if (score9Q < 7) level9Q = "ปกติ";
     else if (score9Q <= 12) level9Q = "ซึมเศร้าระดับน้อย";
     else if (score9Q <= 18) level9Q = "ซึมเศร้าระดับปานกลาง";
     else level9Q = "ซึมเศร้าระดับรุนแรง";
 
-    // แปลผล 8Q (ตัดรหัส รพ. ออก)
     let level8Q = "";
     let statusColor = "";
     let adviceText = "";
@@ -203,16 +201,24 @@
       adviceText = "⚠️ มีความเสี่ยงระดับรุนแรง แนะนำให้พบแพทย์หรือผู้เชี่ยวชาญด้านสุขภาพจิตทันที หรือติดต่อสายด่วนสุขภาพจิต 1323";
     }
 
+    // กำหนดค่าระดับสีสำหรับส่งไปเก็บใน Google Sheets
+    let colorLevelStr = "เขียว";
+    if (statusColor.includes("แดง")) colorLevelStr = "แดง";
+    else if (statusColor.includes("เหลือง") || statusColor.includes("ส้ม")) colorLevelStr = "เหลือง";
+    else if (statusColor.includes("เขียว")) colorLevelStr = "เขียว";
+
     let combinedFeedback = `<b>ผลประเมิน 9Q:</b> ${level9Q}<br><b>ผลประเมิน 8Q:</b> ${level8Q}<br><br><b>ระดับความรุนแรง:</b> ${statusColor}<br><b>คำแนะนำ:</b> ${adviceText}`;
 
     document.getElementById("modalScoreText").innerHTML = `คะแนนรวม 9Q: ${score9Q} | 8Q: ${score8Q}`;
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
+    // เพิ่ม colorLevel เข้าไปใน Payload เพื่อส่งข้อมูลครบทั้ง 5 คอลัมน์
     finalDataPayload = {
-      userId: userId,
+      userId: userId || "ทดสอบผ่านเว็บ",
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
-      feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`
+      feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`,
+      colorLevel: colorLevelStr
     };
 
     try {
