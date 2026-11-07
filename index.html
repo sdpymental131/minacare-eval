@@ -172,13 +172,19 @@
     let userName = "ไม่ระบุชื่อ";
     let userId = "ไม่ระบุ ID";
 
-    // ดึงข้อมูลชื่อและ User ID จาก Profile โดยตรง
+    // ดึงข้อมูลผ่าน ID Token เพื่อรับชื่อและ User ID ที่ถูกต้องแน่นอน
     try {
-      const profile = await liff.getProfile();
-      userName = profile.displayName || "ไม่ระบุชื่อ";
-      userId = profile.userId || "ไม่ระบุ ID";
+      const idToken = liff.getDecodedIDToken();
+      if (idToken) {
+        userName = idToken.name || "ไม่ระบุชื่อ";
+        userId = idToken.sub || "ไม่ระบุ ID";
+      } else {
+        const profile = await liff.getProfile();
+        userName = profile.displayName || "ไม่ระบุชื่อ";
+        userId = profile.userId || "ไม่ระบุ ID";
+      }
     } catch (err) {
-      console.error("Get Profile Error:", err);
+      console.error("Get User Info Error:", err);
     }
 
     let score9Q = 0;
@@ -230,7 +236,7 @@
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // จัดรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID) ส่งตรงไปบันทึก
+    // จัดรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID)
     const formattedUser = `${userName} (${userId})`;
 
     finalDataPayload = {
