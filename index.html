@@ -86,7 +86,6 @@
   const LIFF_ID = "2012444081-koBK4ZLP"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
-  let activeUserId = "";
   let finalDataPayload = null;
 
   const questions9Q = [
@@ -151,14 +150,6 @@
       await liff.init({ liffId: LIFF_ID });
       if (!liff.isLoggedIn()) {
         liff.login();
-      } else {
-        const context = liff.getContext();
-        if (context && context.userId) {
-          activeUserId = context.userId;
-        } else {
-          const profile = await liff.getProfile();
-          activeUserId = profile.userId;
-        }
       }
     } catch (err) {
       console.error("LIFF Init Error:", err);
@@ -167,18 +158,26 @@
 
   document.getElementById("evalForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+    
+    if (!liff.isLoggedIn()) {
+      alert("กรุณาเข้าสู่ระบบ LINE ก่อนทำแบบประเมิน");
+      liff.login();
+      return;
+    }
+
     const btn = document.getElementById("submitBtn");
     btn.disabled = true;
     btn.innerText = "กำลังประมวลผล...";
 
-    let userId = activeUserId;
-    if (!userId && liff.isLoggedIn()) {
-      try {
-        const profile = await liff.getProfile();
-        userId = profile.userId;
-      } catch (err) {
-        console.error("Get Profile Error:", err);
-      }
+    let userName = "ไม่ระบุชื่อ";
+    let userId = "ไม่ระบุ ID";
+
+    try {
+      const profile = await liff.getProfile();
+      userName = profile.displayName || "ไม่ระบุชื่อ";
+      userId = profile.userId || "ไม่ระบุ ID";
+    } catch (err) {
+      console.error("Get Profile Error:", err);
     }
 
     let score9Q = 0;
@@ -230,9 +229,11 @@
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // ส่ง userId ดิบๆ ไปให้ Google Apps Script จัดการดึงชื่อผ่าน LINE API
+    // จัดรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID)
+    const formattedUser = `${userName} (${userId})`;
+
     finalDataPayload = {
-      userId: userId || "ทดสอบผ่านเว็บ",
+      userId: formattedUser, 
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
       feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`,
       colorLevel: colorLevelStr
