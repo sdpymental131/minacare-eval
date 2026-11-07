@@ -83,10 +83,10 @@
 </div>
 
 <script>
-  // LIFF ID และ Web App URL ของคุณ
   const LIFF_ID = "2012444081-koBK4ZLP"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
+  let userDisplayName = "ทดสอบผ่านเว็บ";
   let userId = "";
   let finalDataPayload = null;
 
@@ -148,11 +148,17 @@
   }
 
   function initializeLiff() {
-    liff.init({ liffId: LIFF_ID }).then(() => {
+    liff.init({ liffId: LIFF_ID }).then(async () => {
       if (!liff.isLoggedIn()) {
         liff.login();
       } else {
-        liff.getProfile().then(profile => { userId = profile.userId; });
+        try {
+          const profile = await liff.getProfile();
+          userDisplayName = profile.displayName;
+          userId = profile.userId;
+        } catch (err) {
+          console.error("Get Profile Error:", err);
+        }
       }
     }).catch(err => console.error("LIFF Init Error:", err));
   }
@@ -201,7 +207,6 @@
       adviceText = "⚠️ มีความเสี่ยงระดับรุนแรง แนะนำให้พบแพทย์หรือผู้เชี่ยวชาญด้านสุขภาพจิตทันที หรือติดต่อสายด่วนสุขภาพจิต 1323";
     }
 
-    // กำหนดค่าระดับสีสำหรับส่งไปเก็บใน Google Sheets
     let colorLevelStr = "เขียว";
     if (statusColor.includes("แดง")) colorLevelStr = "แดง";
     else if (statusColor.includes("เหลือง") || statusColor.includes("ส้ม")) colorLevelStr = "เหลือง";
@@ -213,9 +218,11 @@
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // เพิ่ม colorLevel เข้าไปใน Payload เพื่อส่งข้อมูลครบทั้ง 5 คอลัมน์
+    // จัดรูปแบบรวมชื่อและ User ID ส่งไปบันทึกตรงๆ
+    const formattedUser = userDisplayName + " (" + (userId || "ไม่ระบุ ID") + ")";
+
     finalDataPayload = {
-      userId: userId || "ทดสอบผ่านเว็บ",
+      userId: formattedUser, 
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
       feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`,
       colorLevel: colorLevelStr
