@@ -86,6 +86,8 @@
   const LIFF_ID = "2012444081-koBK4ZLP"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
+  let cachedUserName = "ไม่ระบุชื่อ";
+  let cachedUserId = "";
   let finalDataPayload = null;
 
   const questions9Q = [
@@ -145,12 +147,20 @@
     });
   }
 
-  function initializeLiff() {
-    liff.init({ liffId: LIFF_ID }).then(() => {
+  async function initializeLiff() {
+    try {
+      await liff.init({ liffId: LIFF_ID });
       if (!liff.isLoggedIn()) {
         liff.login();
+      } else {
+        // โหลดข้อมูลโปรไฟล์เก็บไว้ล่วงหน้าทันทีที่เปิดหน้าเว็บ
+        const profile = await liff.getProfile();
+        cachedUserName = profile.displayName || "ไม่ระบุชื่อ";
+        cachedUserId = profile.userId || "";
       }
-    }).catch(err => console.error("LIFF Init Error:", err));
+    } catch (err) {
+      console.error("LIFF Init Error:", err);
+    }
   }
 
   document.getElementById("evalForm").addEventListener("submit", async function(e) {
@@ -159,20 +169,22 @@
     btn.disabled = true;
     btn.innerText = "กำลังประมวลผล...";
 
-    let userName = "ไม่ระบุชื่อ";
-    let userId = "ไม่ระบุ ID";
+    let userName = cachedUserName;
+    let userId = cachedUserId;
 
-    // ดึงข้อมูลผู้ใช้จาก ID Token ทันทีเมื่อกดส่ง (รวดเร็วและแม่นยำ ไม่ต้องรอโหลดโปรไฟล์แยก)
-    try {
-      if (liff.isLoggedIn()) {
-        const idToken = liff.getDecodedIDToken();
-        if (idToken) {
-          userId = idToken.sub || "ไม่ระบุ ID";
-          userName = idToken.name || "ไม่ระบุชื่อ";
-        }
+    // หากข้อมูลยังไม่ถูกแคชไว้ ให้ดึงซ้ำอีกรอบทันทีก่อนส่ง
+    if (!userId && liff.isLoggedIn()) {
+      try {
+        const profile = await liff.getProfile();
+        userName = profile.displayName || "ไม่ระบุชื่อ";
+        userId = profile.userId || "ไม่ระบุ ID";
+      } catch (err) {
+        console.error("Get Profile on Submit Error:", err);
       }
-    } catch (err) {
-      console.error("Get ID Token Error:", err);
+    }
+
+    if (!userId) {
+      userId = "ไม่ระบุ ID";
     }
 
     let score9Q = 0;
@@ -224,7 +236,7 @@
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // จัดรูปแบบชื่อและ User ID รวมกันในรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID)
+    // จัดรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID)
     const formattedUser = `${userName} (${userId})`;
 
     finalDataPayload = {
