@@ -188,7 +188,7 @@
     if (score8Q === 0) {
       level8Q = "ไม่มีแนวโน้มการฆ่าตัวตาย";
       statusColor = "🟢 เขียว (ปกติ)";
-      adviceText = "ไม่มีความเสี่ยงต่อการทำร้ายตนเอง แนะนำดูแลสุขภาพใจและพักผ่อนให้เพียงพอ";
+      adviceText = "ไม่มีความเสี่ยงต่อการทำร้ายตนเอง แนะนำดูแลสุขภาพใจและพักผ่อนให้เพียงพอครับ";
     } else if (score8Q <= 8) {
       level8Q = "มีแนวโน้มที่จะฆ่าตัวตายระดับน้อย";
       statusColor = "🟡 เหลือง (เสี่ยงน้อย)";
@@ -209,17 +209,10 @@
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // กำหนดค่าระดับสีเพื่อส่งไปเก็บบันทึก
-    let colorLevelStr = "เขียว";
-    if (statusColor.includes("แดง")) colorLevelStr = "แดง";
-    else if (statusColor.includes("เหลือง") || statusColor.includes("ส้ม")) colorLevelStr = "เหลือง";
-    else if (statusColor.includes("เขียว")) colorLevelStr = "เขียว";
-
     finalDataPayload = {
       userId: userId,
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
-      feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`,
-      colorLevel: colorLevelStr // เพิ่มส่งค่าระดับสีไปด้วย
+      feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`
     };
 
     try {
