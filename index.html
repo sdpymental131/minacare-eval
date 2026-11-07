@@ -86,8 +86,7 @@
   const LIFF_ID = "2012444081-koBK4ZLP"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
-  let cachedUserName = "ไม่ระบุชื่อ";
-  let cachedUserId = "";
+  let activeUserId = "";
   let finalDataPayload = null;
 
   const questions9Q = [
@@ -153,10 +152,13 @@
       if (!liff.isLoggedIn()) {
         liff.login();
       } else {
-        // โหลดข้อมูลโปรไฟล์เก็บไว้ล่วงหน้าทันทีที่เปิดหน้าเว็บ
-        const profile = await liff.getProfile();
-        cachedUserName = profile.displayName || "ไม่ระบุชื่อ";
-        cachedUserId = profile.userId || "";
+        const context = liff.getContext();
+        if (context && context.userId) {
+          activeUserId = context.userId;
+        } else {
+          const profile = await liff.getProfile();
+          activeUserId = profile.userId;
+        }
       }
     } catch (err) {
       console.error("LIFF Init Error:", err);
@@ -169,22 +171,14 @@
     btn.disabled = true;
     btn.innerText = "กำลังประมวลผล...";
 
-    let userName = cachedUserName;
-    let userId = cachedUserId;
-
-    // หากข้อมูลยังไม่ถูกแคชไว้ ให้ดึงซ้ำอีกรอบทันทีก่อนส่ง
+    let userId = activeUserId;
     if (!userId && liff.isLoggedIn()) {
       try {
         const profile = await liff.getProfile();
-        userName = profile.displayName || "ไม่ระบุชื่อ";
-        userId = profile.userId || "ไม่ระบุ ID";
+        userId = profile.userId;
       } catch (err) {
-        console.error("Get Profile on Submit Error:", err);
+        console.error("Get Profile Error:", err);
       }
-    }
-
-    if (!userId) {
-      userId = "ไม่ระบุ ID";
     }
 
     let score9Q = 0;
@@ -236,11 +230,9 @@
     document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
     document.getElementById("resultModal").style.display = "flex";
 
-    // จัดรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID)
-    const formattedUser = `${userName} (${userId})`;
-
+    // ส่ง userId ดิบๆ ไปให้ Google Apps Script จัดการดึงชื่อผ่าน LINE API
     finalDataPayload = {
-      userId: formattedUser, 
+      userId: userId || "ทดสอบผ่านเว็บ",
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
       feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`,
       colorLevel: colorLevelStr
