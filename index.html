@@ -36,13 +36,12 @@
 
     /* Modal Pop-up UI */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: popIn 0.3s ease; }
+    .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: popIn 0.3s ease; max-height: 90vh; overflow-y: auto; }
     @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     
-    .modal-icon { font-size: 40px; margin-bottom: 10px; }
-    .modal-title { font-size: 18px; font-weight: 600; color: #1DB446; margin-bottom: 15px; }
-    .score-container { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; color: #166534; margin-bottom: 15px; }
-    .feedback-box { text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 13px; color: #334155; margin-bottom: 20px; line-height: 1.5; }
+    .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .feedback-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 13px; color: #334155; margin-bottom: 15px; line-height: 1.6; }
+    .contact-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; font-size: 12px; color: #475569; margin-bottom: 20px; line-height: 1.6; }
     .close-btn { background: #1DB446; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
   </style>
 </head>
@@ -74,10 +73,9 @@
 <!-- Modal Pop-up สรุปผล -->
 <div id="resultModal" class="modal">
   <div class="modal-content">
-    <div class="modal-icon">📋</div>
-    <div class="modal-title">สรุปผลการประเมิน</div>
-    <div class="score-container" id="modalScoreText">กำลังคำนวณ...</div>
+    <div class="modal-title" id="modalTitleText">🌿 สรุปผลประเมิน MindCare</div>
     <div class="feedback-box" id="modalFeedbackText">-</div>
+    <div class="contact-box" id="modalContactText">-</div>
     <button class="close-btn" onclick="closeModalAndFinish()">รับทราบและปิดหน้าต่าง</button>
   </div>
 </div>
@@ -172,7 +170,6 @@
     let userName = "ไม่ระบุชื่อ";
     let userId = "ไม่ระบุ ID";
 
-    // ดึงข้อมูลผ่าน ID Token เพื่อรับชื่อและ User ID ที่ถูกต้องแน่นอน
     try {
       const idToken = liff.getDecodedIDToken();
       if (idToken) {
@@ -197,53 +194,47 @@
       score8Q += parseInt(document.querySelector(`input[name="q8_${i}"]:checked`).value);
     }
 
-    let level9Q = "";
-    if (score9Q < 7) level9Q = "ปกติ";
-    else if (score9Q <= 12) level9Q = "ซึมเศร้าระดับน้อย";
-    else if (score9Q <= 18) level9Q = "ซึมเศร้าระดับปานกลาง";
-    else level9Q = "ซึมเศร้าระดับรุนแรง";
-
-    let level8Q = "";
-    let statusColor = "";
-    let adviceText = "";
-
-    if (score8Q === 0) {
-      level8Q = "ไม่มีแนวโน้มการฆ่าตัวตาย";
-      statusColor = "🟢 เขียว (ปกติ)";
-      adviceText = "ไม่มีความเสี่ยงต่อการทำร้ายตนเอง แนะนำดูแลสุขภาพใจและพักผ่อนให้เพียงพอครับ";
-    } else if (score8Q <= 8) {
-      level8Q = "มีแนวโน้มที่จะฆ่าตัวตายระดับน้อย";
-      statusColor = "🟡 เหลือง (เสี่ยงน้อย)";
-      adviceText = "มีความเสี่ยงระดับน้อย ควรพูดคุยระบายความร้อนใจกับคนที่ไว้ใจ หรือทำกิจกรรมผ่อนคลาย";
-    } else if (score8Q <= 16) {
-      level8Q = "มีแนวโน้มที่จะฆ่าตัวตายระดับปานกลาง";
-      statusColor = "🟠 ส้ม/เหลืองเข้ม (เสี่ยงปานกลาง)";
-      adviceText = "มีความเสี่ยงระดับปานกลาง แนะนำให้ปรึกษาบุคลากรสาธารณสุขใกล้บ้านเพื่อรับคำแนะนำเพิ่มเติม";
-    } else {
-      level8Q = "มีแนวโน้มที่จะฆ่าตัวตายระดับรุนแรง";
-      statusColor = "🔴 แดง (เสี่ยงรุนแรง)";
-      adviceText = "⚠️ มีความเสี่ยงระดับรุนแรง แนะนำให้พบแพทย์หรือผู้เชี่ยวชาญด้านสุขภาพจิตทันที หรือติดต่อสายด่วนสุขภาพจิต 1323";
+    // กำหนดระดับสีความเสี่ยงจริงทางคลินิก (สำหรับบันทึกและส่งแอดมิน)
+    let realColorLevel = "เขียว";
+    if (score8Q > 0 || score9Q >= 13) {
+      realColorLevel = (score8Q >= 9 || score9Q >= 19) ? "แดง" : "เหลือง";
     }
 
-    let colorLevelStr = "เขียว";
-    if (statusColor.includes("แดง")) colorLevelStr = "แดง";
-    else if (statusColor.includes("เหลือง") || statusColor.includes("ส้ม")) colorLevelStr = "เหลือง";
-    else if (statusColor.includes("เขียว")) colorLevelStr = "เขียว";
+    // กำหนดข้อความคำแนะนำแบบเป็นกลาง ไร้ ครับ/ค่ะ
+    let modalTitle = "";
+    let adviceText = "";
+    let contactText = "";
 
-    let combinedFeedback = `<b>ผลประเมิน 9Q:</b> ${level9Q}<br><b>ผลประเมิน 8Q:</b> ${level8Q}<br><br><b>ระดับความรุนแรง:</b> ${statusColor}<br><b>คำแนะนำ:</b> ${adviceText}`;
+    if (realColorLevel === "เขียว") {
+      modalTitle = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
+      adviceText = "มีการจัดการอารมณ์ที่ดีและมีความเข้มแข็งทางจิตใจ สามารถดูแลสุขภาพใจของตนเองได้อย่างสม่ำเสมอ";
+      contactText = "📌 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
+    } else if (realColorLevel === "เหลือง") {
+      modalTitle = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
+      adviceText = "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา";
+      contactText = "🤝 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
+    } else {
+      modalTitle = "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง";
+      adviceText = "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด";
+      contactText = "🚑 <b>ช่องทางขอความช่วยเหลือทันที:</b><br>• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
+    }
 
-    document.getElementById("modalScoreText").innerHTML = `คะแนนรวม 9Q: ${score9Q} | 8Q: ${score8Q}`;
-    document.getElementById("modalFeedbackText").innerHTML = combinedFeedback;
+    // แสดงผลลงใน Modal
+    document.getElementById("modalTitleText").innerText = modalTitle;
+    document.getElementById("modalFeedbackText").innerHTML = `<b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceText}`;
+    document.getElementById("modalContactText").innerHTML = contactText;
     document.getElementById("resultModal").style.display = "flex";
 
-    // จัดรูปแบบ: ชื่อผู้ใช้งาน (LINE User ID)
     const formattedUser = `${userName} (${userId})`;
 
+    // เตรียม Payload ส่งข้อมูลหลังบ้านและเข้า LINE
     finalDataPayload = {
       userId: formattedUser, 
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
-      feedback: `9Q: ${level9Q} | 8Q: ${level8Q}`,
-      colorLevel: colorLevelStr
+      feedback: adviceText,
+      contact: contactText.replace(/<br>/g, "\n").replace(/<b>/g, "").replace(/<\/b>/g, ""),
+      colorLevel: realColorLevel,
+      modalTitle: modalTitle
     };
 
     try {
@@ -269,10 +260,11 @@
               type: "box",
               layout: "vertical",
               contents: [
-                { type: "text", text: "🌿 สรุปผลประเมิน MindCare", weight: "bold", size: "md", color: "#1DB446" },
-                { type: "text", text: "ระดับคะแนน: " + finalDataPayload.score, size: "sm", margin: "md", weight: "bold" },
+                { type: "text", text: finalDataPayload.modalTitle, weight: "bold", size: "md", color: finalDataPayload.colorLevel === 'แดง' ? '#EF4444' : (finalDataPayload.colorLevel === 'เหลือง' ? '#EAB308' : '#1DB446') },
                 { type: "separator", margin: "md" },
-                { type: "text", text: finalDataPayload.feedback, size: "xs", wrap: true, color: "#475569", margin: "md" }
+                { type: "text", text: finalDataPayload.feedback, size: "sm", margin: "md", wrap: true, color: "#334155" },
+                { type: "separator", margin: "md" },
+                { type: "text", text: finalDataPayload.contact, size: "xs", margin: "md", wrap: true, color: "#475569" }
               ]
             }
           }
