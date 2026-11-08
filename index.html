@@ -194,13 +194,12 @@
       score8Q += parseInt(document.querySelector(`input[name="q8_${i}"]:checked`).value);
     }
 
-    // กำหนดระดับสีความเสี่ยงจริงทางคลินิก (สำหรับบันทึกและส่งแอดมิน)
+    // กำหนดระดับสีความเสี่ยงจริงทางคลินิก
     let realColorLevel = "เขียว";
     if (score8Q > 0 || score9Q >= 13) {
       realColorLevel = (score8Q >= 9 || score9Q >= 19) ? "แดง" : "เหลือง";
     }
 
-    // กำหนดข้อความคำแนะนำแบบเป็นกลาง ไร้ ครับ/ค่ะ
     let modalTitle = "";
     let adviceText = "";
     let contactText = "";
@@ -227,7 +226,7 @@
 
     const formattedUser = `${userName} (${userId})`;
 
-    // เตรียม Payload ส่งข้อมูลหลังบ้านและเข้า LINE
+    // เตรียม Payload ส่งข้อมูล (ปรับฟิลด์ชื่อให้ตรงกับ Google Apps Script)
     finalDataPayload = {
       userId: formattedUser, 
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
@@ -237,14 +236,16 @@
       modalTitle: modalTitle
     };
 
+    // ส่งข้อมูลเข้า Google Apps Script (แก้ไขโดยถอด no-cors ออกและใช้ text/plain)
     try {
-      fetch(GAS_WEB_APP_URL, {
+      await fetch(GAS_WEB_APP_URL, {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(finalDataPayload)
       });
-    } catch (err) { console.error("Sheets Error:", err); }
+    } catch (err) { 
+      console.error("Sheets Error:", err); 
+    }
   });
 
   async function closeModalAndFinish() {
