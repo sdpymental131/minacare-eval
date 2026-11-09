@@ -9,39 +9,37 @@
   <!-- Google Fonts: Prompt -->
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
-    body { background-color: #f0f4f8; margin: 0; padding: 15px; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
+    * { box-sizing: border-box; font-family: 'Prompt', sans-serif; word-wrap: break-word; overflow-wrap: break-word; }
+    body { background-color: #f0f4f8; margin: 0; padding: 12px; color: #333; }
+    .container { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
     
-    .header { background: linear-gradient(135deg, #1DB446 0%, #108a33 100%); padding: 25px 20px; text-align: center; color: white; }
-    .header h2 { margin: 0; font-size: 22px; font-weight: 600; }
+    .header { background: linear-gradient(135deg, #1DB446 0%, #108a33 100%); padding: 22px 16px; text-align: center; color: white; }
+    .header h2 { margin: 0; font-size: 20px; font-weight: 600; }
     .header p { margin: 5px 0 0; font-size: 13px; opacity: 0.9; font-weight: 300; }
 
-    .content { padding: 20px; }
-    .section-title { font-size: 16px; font-weight: 600; color: #1DB446; margin: 25px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8f5e9; display: flex; align-items: center; gap: 8px; }
-    .section-desc { font-size: 12px; color: #666; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 3px solid #1DB446; }
+    .content { padding: 16px; }
+    .section-title { font-size: 15px; font-weight: 600; color: #1DB446; margin: 22px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8f5e9; display: flex; align-items: center; gap: 8px; }
+    .section-desc { font-size: 12px; color: #666; margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 3px solid #1DB446; line-height: 1.4; }
 
-    .question-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 12px; transition: all 0.2s ease; }
-    .question-card:focus-within { border-color: #1DB446; box-shadow: 0 0 0 3px rgba(29, 180, 70, 0.1); }
-    .question-title { font-size: 14px; font-weight: 500; color: #2d3748; margin-bottom: 10px; line-height: 1.4; }
+    .question-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+    .question-title { font-size: 13px; font-weight: 500; color: #2d3748; margin-bottom: 10px; line-height: 1.4; }
     
-    .options { display: flex; flex-direction: column; gap: 8px; }
-    .option-label { display: flex; align-items: center; padding: 8px 12px; background: #f8fafc; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+    .options { display: flex; flex-direction: column; gap: 6px; }
+    .option-label { display: flex; align-items: center; padding: 10px 12px; background: #f8fafc; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s; }
     .option-label:hover { background: #f1f5f9; }
-    .option-label input[type="radio"] { margin-right: 10px; accent-color: #1DB446; width: 16px; height: 16px; }
+    .option-label input[type="radio"] { margin-right: 10px; accent-color: #1DB446; width: 18px; height: 18px; flex-shrink: 0; }
 
-    .btn-submit { width: 100%; background: #1DB446; color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 25px; box-shadow: 0 4px 12px rgba(29, 180, 70, 0.25); transition: background 0.2s; }
+    .btn-submit { width: 100%; background: #1DB446; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 12px rgba(29, 180, 70, 0.25); }
     .btn-submit:hover { background: #159b3a; }
     .btn-submit:disabled { background: #cbd5e1; box-shadow: none; }
 
     /* Modal Pop-up UI */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background: white; padding: 25px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); animation: popIn 0.3s ease; max-height: 90vh; overflow-y: auto; }
-    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-content { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
     
-    .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .feedback-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 13px; color: #334155; margin-bottom: 15px; line-height: 1.6; }
-    .contact-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; font-size: 12px; color: #475569; margin-bottom: 20px; line-height: 1.6; }
+    .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+    .feedback-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; font-size: 13px; color: #334155; margin-bottom: 12px; line-height: 1.5; }
+    .contact-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; font-size: 12px; color: #475569; margin-bottom: 16px; line-height: 1.5; }
     .close-btn { background: #1DB446; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
   </style>
 </head>
@@ -206,20 +204,20 @@
     if (realColorLevel === "เขียว") {
       modalTitle = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
       adviceText = "มีการจัดการอารมณ์ที่ดีและมีความเข้มแข็งทางจิตใจ สามารถดูแลสุขภาพใจของตนเองได้อย่างสม่ำเสมอ";
-      contactText = "📌 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
+      contactText = "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
     } else if (realColorLevel === "เหลือง") {
       modalTitle = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
       adviceText = "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา";
-      contactText = "🤝 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
+      contactText = "🤝 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
     } else {
       modalTitle = "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง";
       adviceText = "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด";
-      contactText = "🚑 <b>ช่องทางขอความช่วยเหลือทันที:</b><br>• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
+      contactText = "🚑 ช่องทางขอความช่วยเหลือทันที:\n• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
     }
 
     document.getElementById("modalTitleText").innerText = modalTitle;
     document.getElementById("modalFeedbackText").innerHTML = `<b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceText}`;
-    document.getElementById("modalContactText").innerHTML = contactText;
+    document.getElementById("modalContactText").innerHTML = contactText.replace(/\n/g, "<br>");
     document.getElementById("resultModal").style.display = "flex";
 
     const formattedUser = `${userName} (${userId})`;
@@ -228,7 +226,7 @@
       userId: formattedUser, 
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
       feedback: adviceText,
-      contact: contactText.replace(/<br>/g, "\n").replace(/<b>/g, "").replace(/<\/b>/g, ""),
+      contact: contactText,
       colorLevel: realColorLevel,
       modalTitle: modalTitle
     };
@@ -257,7 +255,7 @@
               type: "box",
               layout: "vertical",
               contents: [
-                { type: "text", text: finalDataPayload.modalTitle, weight: "bold", size: "md", color: finalDataPayload.colorLevel === 'แดง' ? '#EF4444' : (finalDataPayload.colorLevel === 'เหลือง' ? '#EAB308' : '#1DB446') },
+                { type: "text", text: finalDataPayload.modalTitle, weight: "bold", size: "md", wrap: true, color: finalDataPayload.colorLevel === 'แดง' ? '#EF4444' : (finalDataPayload.colorLevel === 'เหลือง' ? '#EAB308' : '#1DB446') },
                 { type: "separator", margin: "md" },
                 { type: "text", text: finalDataPayload.feedback, size: "sm", margin: "md", wrap: true, color: "#334155" },
                 { type: "separator", margin: "md" },
