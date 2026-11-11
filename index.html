@@ -246,6 +246,7 @@
     if (liff.isInClient()) {
       try {
         let flexContents = [];
+        let cacheBuster = " (รหัสอ้างอิง: " + Date.now() + ")"; // บังคับรีเฟรชแคชของ LINE
 
         if (currentRiskColor === "เขียว") {
           flexContents = [
@@ -262,7 +263,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ ให้คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                    { type: "text", text: "✅ 1. คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
                     { type: "text", text: "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ", size: "xs", color: "#64748B", wrap: true }
                   ]
                 },
@@ -271,7 +272,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ แนะนำวิธีจัดการความเครียด", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                    { type: "text", text: "✅ 2. วิธีจัดการความเครียด", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
                     { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", color: "#64748B", wrap: true }
                   ]
                 },
@@ -280,7 +281,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ ให้ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                    { type: "text", text: "✅ 3. ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
                     { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", color: "#64748B", wrap: true }
                   ]
                 },
@@ -289,7 +290,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                    { type: "text", text: "✅ 4. เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
                     { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาวะทางอารมณ์อย่างต่อเนื่อง", size: "xs", color: "#64748B", wrap: true }
                   ]
                 }
@@ -303,7 +304,8 @@
               spacing: "xs",
               contents: [
                 { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#475569", wrap: true },
-                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
+                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true },
+                { type: "text", text: cacheBuster, size: "xxs", color: "#CBD5E1", wrap: true, margin: "sm" }
               ]
             }
           ];
@@ -327,7 +329,7 @@
 
         await liff.sendMessages([{
           type: "flex",
-          altText: "สรุปผลการประเมินสุขภาพใจ MindCare SDPY",
+          altText: "สรุปผลการประเมินสุขภาพใจ MindCare SDPY (อัปเดตใหม่)",
           contents: {
             type: "bubble",
             body: {
