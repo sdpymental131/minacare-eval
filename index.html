@@ -82,7 +82,7 @@
   const LIFF_ID = "2012444081-koBK4ZLP"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
-  let finalDataPayload = null;
+  let linePayload = null; // เก็บข้อมูลเฉพาะส่งเข้า LINE
 
   const questions9Q = [
     "1. เบื่อไม่สนใจอยากทำอะไร",
@@ -198,18 +198,19 @@
     }
 
     let modalTitle = "";
-    let adviceTextModal = ""; // ข้อความที่จะแสดงบนหน้าเว็บ (Modal)
-    let adviceTextLine = "";  // ข้อความที่จะส่งเข้า LINE
+    let adviceTextModal = "";
     let contactTextModal = "";
+    
+    let adviceTextLine = "";
     let contactTextLine = "";
 
     if (realColorLevel === "เขียว") {
       modalTitle = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
-      // ข้อความเดิมแสดงบนหน้าเว็บ (Modal)
+      // ข้อความแสดงในหน้า Modal (เหมือนเดิม)
       adviceTextModal = "มีการจัดการอารมณ์ที่ดีและมีความเข้มแข็งทางจิตใจ สามารถดูแลสุขภาพใจของตนเองได้อย่างสม่ำเสมอ";
       contactTextModal = "📌 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
       
-      // ข้อความใหม่ตามภาพสำหรับส่งเข้า LINE เท่านั้น
+      // ข้อความสำหรับส่งลงแชท LINE (เพิ่ม 4 คำแนะนำตามภาพ)
       adviceTextLine = "✅ ให้คำแนะนำและความรู้ด้านสุขภาพจิต\n✅ แนะนำวิธีจัดการความเครียด\n• มีการจัดการอารมณ์ที่ดีและมีความเข้มแข็งทางจิตใจ สามารถดูแลสุขภาพใจของตนเองได้อย่างสม่ำเสมอ";
       contactTextLine = "📌 ช่องทางติดต่อและการติดตาม:\n✅ ให้ข้อมูลช่องทางติดต่อ\n✅ เฝ้าระวังและติดตามตามความเหมาะสม\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
     } else if (realColorLevel === "เหลือง") {
@@ -224,7 +225,7 @@
       contactTextLine = "🚑 ช่องทางขอความช่วยเหลือทันที:\n• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
     }
 
-    // แสดงผลบนหน้าเว็บ (Modal) เป็นแบบเดิม
+    // 1. แสดงผลหน้าเว็บ (Modal) เป็นข้อความสั้นแบบเดิม
     document.getElementById("modalTitleText").innerText = modalTitle;
     document.getElementById("modalFeedbackText").innerHTML = `<b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceTextModal}`;
     document.getElementById("modalContactText").innerHTML = contactTextModal;
@@ -232,8 +233,8 @@
 
     const formattedUser = `${userName} (${userId})`;
 
-    // เตรียม Payload สำหรับส่งเข้า LINE
-    finalDataPayload = {
+    // 2. เตรียมชุดข้อมูลแยกไว้ส่งเข้าแชท LINE ตอนกดปิด Modal
+    linePayload = {
       userId: formattedUser, 
       score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
       feedback: adviceTextLine,
@@ -242,11 +243,19 @@
       modalTitle: modalTitle
     };
 
+    // ส่งเข้า Google Sheets หลังบ้าน
     try {
       await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(finalDataPayload)
+        body: JSON.stringify({
+          userId: formattedUser, 
+          score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
+          feedback: adviceTextModal,
+          contact: contactTextModal.replace(/<br>/g, "\n").replace(/<b>/g, "").replace(/<\/b>/g, ""),
+          colorLevel: realColorLevel,
+          modalTitle: modalTitle
+        })
       });
     } catch (err) { 
       console.error("Sheets Error:", err); 
@@ -255,7 +264,7 @@
 
   async function closeModalAndFinish() {
     document.getElementById("resultModal").style.display = "none";
-    if (liff.isInClient() && finalDataPayload) {
+    if (liff.isInClient() && linePayload) {
       try {
         await liff.sendMessages([{
           type: "flex",
@@ -266,11 +275,32 @@
               type: "box",
               layout: "vertical",
               contents: [
-                { type: "text", text: finalDataPayload.modalTitle, weight: "bold", size: "md", wrap: true, color: finalDataPayload.colorLevel === 'แดง' ? '#EF4444' : (finalDataPayload.colorLevel === 'เหลือง' ? '#EAB308' : '#1DB446') },
+                { 
+                  type: "text", 
+                  text: linePayload.modalTitle, 
+                  weight: "bold", 
+                  size: "md", 
+                  wrap: true, 
+                  color: linePayload.colorLevel === 'แดง' ? '#EF4444' : (linePayload.colorLevel === 'เหลือง' ? '#EAB308' : '#1DB446') 
+                },
                 { type: "separator", margin: "md" },
-                { type: "text", text: finalDataPayload.feedback, size: "sm", margin: "md", wrap: true, color: "#334155" },
+                { 
+                  type: "text", 
+                  text: linePayload.feedback, 
+                  size: "sm", 
+                  margin: "md", 
+                  wrap: true, 
+                  color: "#334155" 
+                },
                 { type: "separator", margin: "md" },
-                { type: "text", text: finalDataPayload.contact, size: "xs", margin: "md", wrap: true, color: "#475569" }
+                { 
+                  type: "text", 
+                  text: linePayload.contact, 
+                  size: "xs", 
+                  margin: "md", 
+                  wrap: true, 
+                  color: "#475569" 
+                }
               ]
             }
           }
