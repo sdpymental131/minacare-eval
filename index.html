@@ -248,29 +248,44 @@
         let flexContents = [];
 
         if (currentRiskColor === "เขียว") {
-          // เพิ่มคำอธิบายรายละเอียดในแต่ละหัวข้อคำแนะนำ 4 ข้อสำหรับกลุ่มสีเขียว
           flexContents = [
+            // หัวข้อหลัก
             { type: "text", text: "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี", weight: "bold", size: "md", color: "#1DB446", wrap: true },
             { type: "separator", margin: "md" },
             
-            // ข้อที่ 1
-            { type: "text", text: "✅ ให้คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "sm", margin: "md", color: "#2d3748", wrap: true },
-            { type: "text", text: "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ", size: "xs", margin: "xs", color: "#64748B", wrap: true },
-            
-            // ข้อที่ 2
-            { type: "text", text: "✅ แนะนำวิธีจัดการความเครียด", weight: "bold", size: "sm", margin: "sm", color: "#2d3748", wrap: true },
-            { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", margin: "xs", color: "#64748B", wrap: true },
-            
-            // ข้อที่ 3
-            { type: "text", text: "✅ ให้ข้อมูลช่องทางติดต่อ", weight: "bold", size: "sm", margin: "sm", color: "#2d3748", wrap: true },
-            { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", margin: "xs", color: "#64748B", wrap: true },
-            
-            // ข้อที่ 4
-            { type: "text", text: "✅ เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "sm", margin: "sm", color: "#2d3748", wrap: true },
-            { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาวะทางอารมณ์อย่างต่อเนื่อง", size: "xs", margin: "xs", color: "#64748B", wrap: true },
-            
+            // กล่องย่อยคำแนะนำ
+            {
+              type: "box",
+              layout: "vertical",
+              margin: "md",
+              spacing: "sm",
+              contents: [
+                { type: "text", text: "✅ การส่งเสริมสุขภาพจิตและความรอบรู้", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                { type: "text", text: "• สร้างความตระหนักรู้และหมั่นประเมินสภาวะอารมณ์ของตนเองอย่างสม่ำเสมอ", size: "xs", color: "#64748B", wrap: true },
+                
+                { type: "text", text: "✅ ทักษะการบริหารจัดการความเครียด", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                { type: "text", text: "• ประยุกต์ใช้เทคนิคการผ่อนคลาย เช่น การฝึกหายใจและการพักผ่อนที่เพียงพอ", size: "xs", color: "#64748B", wrap: true },
+                
+                { type: "text", text: "✅ การเข้าถึงช่องทางบริการและคำปรึกษา", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                { type: "text", text: "• รับทราบข้อมูลและช่องทางติดต่อเพื่อขอรับคำปรึกษาเมื่อจำเป็น", size: "xs", color: "#64748B", wrap: true },
+                
+                { type: "text", text: "✅ การเฝ้าระวังและติดตามสุขภาวะ", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
+                { type: "text", text: "• ประเมินคัดกรองสุขภาพใจของตนเองซ้ำเป็นประจำเพื่อติดตามอารมณ์ในระยะยาว", size: "xs", color: "#64748B", wrap: true }
+              ]
+            },
+
             { type: "separator", margin: "md" },
-            { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", margin: "md", color: "#475569", wrap: true }
+            
+            // ช่องทางติดต่อ
+            {
+              type: "box",
+              layout: "vertical",
+              margin: "md",
+              contents: [
+                { type: "text", text: "📌 ช่องทางขอรับคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#475569", wrap: true },
+                { type: "text", text: "• โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", margin: "xs", color: "#475569", wrap: true }
+              ]
+            }
           ];
         } else if (currentRiskColor === "เหลือง") {
           flexContents = [
