@@ -246,7 +246,6 @@
     if (liff.isInClient()) {
       try {
         let flexContents = [];
-        let cacheBuster = " (รหัสอ้างอิง: " + Date.now() + ")"; // บังคับรีเฟรชแคชของ LINE
 
         if (currentRiskColor === "เขียว") {
           flexContents = [
@@ -304,8 +303,7 @@
               spacing: "xs",
               contents: [
                 { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#475569", wrap: true },
-                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true },
-                { type: "text", text: cacheBuster, size: "xxs", color: "#CBD5E1", wrap: true, margin: "sm" }
+                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
               ]
             }
           ];
@@ -329,7 +327,7 @@
 
         await liff.sendMessages([{
           type: "flex",
-          altText: "สรุปผลการประเมินสุขภาพใจ MindCare SDPY (อัปเดตใหม่)",
+          altText: "สรุปผลการประเมินสุขภาพใจ MindCare SDPY",
           contents: {
             type: "bubble",
             body: {
