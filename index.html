@@ -82,7 +82,7 @@
   const LIFF_ID = "2012444081-koBK4ZLP"; 
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
-  let linePayload = null; // เก็บข้อมูลเฉพาะส่งเข้า LINE
+  let currentRiskColor = "เขียว";
 
   const questions9Q = [
     "1. เบื่อไม่สนใจอยากทำอะไร",
@@ -192,40 +192,30 @@
       score8Q += parseInt(document.querySelector(`input[name="q8_${i}"]:checked`).value);
     }
 
-    let realColorLevel = "เขียว";
+    currentRiskColor = "เขียว";
     if (score8Q > 0 || score9Q >= 13) {
-      realColorLevel = (score8Q >= 9 || score9Q >= 19) ? "แดง" : "เหลือง";
+      currentRiskColor = (score8Q >= 9 || score9Q >= 19) ? "แดง" : "เหลือง";
     }
 
     let modalTitle = "";
     let adviceTextModal = "";
     let contactTextModal = "";
-    
-    let adviceTextLine = "";
-    let contactTextLine = "";
 
-    if (realColorLevel === "เขียว") {
+    if (currentRiskColor === "เขียว") {
       modalTitle = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
-      // ข้อความแสดงในหน้า Modal (เหมือนเดิม)
       adviceTextModal = "มีการจัดการอารมณ์ที่ดีและมีความเข้มแข็งทางจิตใจ สามารถดูแลสุขภาพใจของตนเองได้อย่างสม่ำเสมอ";
       contactTextModal = "📌 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
-      
-      // ข้อความสำหรับส่งลงแชท LINE (เพิ่ม 4 คำแนะนำตามภาพ)
-      adviceTextLine = "✅ ให้คำแนะนำและความรู้ด้านสุขภาพจิต\n✅ แนะนำวิธีจัดการความเครียด\n• มีการจัดการอารมณ์ที่ดีและมีความเข้มแข็งทางจิตใจ สามารถดูแลสุขภาพใจของตนเองได้อย่างสม่ำเสมอ";
-      contactTextLine = "📌 ช่องทางติดต่อและการติดตาม:\n✅ ให้ข้อมูลช่องทางติดต่อ\n✅ เฝ้าระวังและติดตามตามความเหมาะสม\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
-    } else if (realColorLevel === "เหลือง") {
+    } else if (currentRiskColor === "เหลือง") {
       modalTitle = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
-      adviceTextModal = adviceTextLine = "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา";
+      adviceTextModal = "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา";
       contactTextModal = "🤝 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
-      contactTextLine = "🤝 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
     } else {
       modalTitle = "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง";
-      adviceTextModal = adviceTextLine = "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด";
+      adviceTextModal = "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด";
       contactTextModal = "🚑 <b>ช่องทางขอความช่วยเหลือทันที:</b><br>• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
-      contactTextLine = "🚑 ช่องทางขอความช่วยเหลือทันที:\n• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
     }
 
-    // 1. แสดงผลหน้าเว็บ (Modal) เป็นข้อความสั้นแบบเดิม
+    // แสดงผล Pop-up บนเว็บ
     document.getElementById("modalTitleText").innerText = modalTitle;
     document.getElementById("modalFeedbackText").innerHTML = `<b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceTextModal}`;
     document.getElementById("modalContactText").innerHTML = contactTextModal;
@@ -233,17 +223,7 @@
 
     const formattedUser = `${userName} (${userId})`;
 
-    // 2. เตรียมชุดข้อมูลแยกไว้ส่งเข้าแชท LINE ตอนกดปิด Modal
-    linePayload = {
-      userId: formattedUser, 
-      score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
-      feedback: adviceTextLine,
-      contact: contactTextLine,
-      colorLevel: realColorLevel,
-      modalTitle: modalTitle
-    };
-
-    // ส่งเข้า Google Sheets หลังบ้าน
+    // ส่งข้อมูลเข้า Sheets
     try {
       await fetch(GAS_WEB_APP_URL, {
         method: "POST",
@@ -252,8 +232,7 @@
           userId: formattedUser, 
           score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
           feedback: adviceTextModal,
-          contact: contactTextModal.replace(/<br>/g, "\n").replace(/<b>/g, "").replace(/<\/b>/g, ""),
-          colorLevel: realColorLevel,
+          colorLevel: currentRiskColor,
           modalTitle: modalTitle
         })
       });
@@ -264,8 +243,53 @@
 
   async function closeModalAndFinish() {
     document.getElementById("resultModal").style.display = "none";
-    if (liff.isInClient() && linePayload) {
+    if (liff.isInClient()) {
       try {
+        let flexContents = [];
+
+        if (currentRiskColor === "เขียว") {
+          // เพิ่มคำอธิบายรายละเอียดในแต่ละหัวข้อคำแนะนำ 4 ข้อสำหรับกลุ่มสีเขียว
+          flexContents = [
+            { type: "text", text: "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี", weight: "bold", size: "md", color: "#1DB446", wrap: true },
+            { type: "separator", margin: "md" },
+            
+            // ข้อที่ 1
+            { type: "text", text: "✅ ให้คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "sm", margin: "md", color: "#2d3748", wrap: true },
+            { type: "text", text: "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ", size: "xs", margin: "xs", color: "#64748B", wrap: true },
+            
+            // ข้อที่ 2
+            { type: "text", text: "✅ แนะนำวิธีจัดการความเครียด", weight: "bold", size: "sm", margin: "sm", color: "#2d3748", wrap: true },
+            { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", margin: "xs", color: "#64748B", wrap: true },
+            
+            // ข้อที่ 3
+            { type: "text", text: "✅ ให้ข้อมูลช่องทางติดต่อ", weight: "bold", size: "sm", margin: "sm", color: "#2d3748", wrap: true },
+            { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", margin: "xs", color: "#64748B", wrap: true },
+            
+            // ข้อที่ 4
+            { type: "text", text: "✅ เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "sm", margin: "sm", color: "#2d3748", wrap: true },
+            { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาวะทางอารมณ์อย่างต่อเนื่อง", size: "xs", margin: "xs", color: "#64748B", wrap: true },
+            
+            { type: "separator", margin: "md" },
+            { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", margin: "md", color: "#475569", wrap: true }
+          ];
+        } else if (currentRiskColor === "เหลือง") {
+          flexContents = [
+            { type: "text", text: "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม", weight: "bold", size: "md", color: "#EAB308", wrap: true },
+            { type: "separator", margin: "md" },
+            { type: "text", text: "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา", size: "sm", margin: "md", color: "#334155", wrap: true },
+            { type: "separator", margin: "md" },
+            { type: "text", text: "🤝 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "xs", margin: "md", color: "#475569", wrap: true }
+          ];
+        } else {
+          flexContents = [
+            { type: "text", text: "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง", weight: "bold", size: "md", color: "#EF4444", wrap: true },
+            { type: "separator", margin: "md" },
+            { type: "text", text: "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด", size: "sm", margin: "md", color: "#334155", wrap: true },
+            { type: "separator", margin: "md" },
+            { type: "text", text: "🚑 ช่องทางขอความช่วยเหลือทันที:\n• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "xs", margin: "md", color: "#475569", wrap: true }
+          ];
+        }
+
         await liff.sendMessages([{
           type: "flex",
           altText: "สรุปผลการประเมินสุขภาพใจ MindCare SDPY",
@@ -274,34 +298,7 @@
             body: {
               type: "box",
               layout: "vertical",
-              contents: [
-                { 
-                  type: "text", 
-                  text: linePayload.modalTitle, 
-                  weight: "bold", 
-                  size: "md", 
-                  wrap: true, 
-                  color: linePayload.colorLevel === 'แดง' ? '#EF4444' : (linePayload.colorLevel === 'เหลือง' ? '#EAB308' : '#1DB446') 
-                },
-                { type: "separator", margin: "md" },
-                { 
-                  type: "text", 
-                  text: linePayload.feedback, 
-                  size: "sm", 
-                  margin: "md", 
-                  wrap: true, 
-                  color: "#334155" 
-                },
-                { type: "separator", margin: "md" },
-                { 
-                  type: "text", 
-                  text: linePayload.contact, 
-                  size: "xs", 
-                  margin: "md", 
-                  wrap: true, 
-                  color: "#475569" 
-                }
-              ]
+              contents: flexContents
             }
           }
         }]);
