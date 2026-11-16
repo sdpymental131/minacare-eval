@@ -18,6 +18,13 @@
     .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
     .content { padding: 16px; }
+    
+    /* สไตล์สำหรับกล่องเลือกตำบลและหมู่ที่ */
+    .tambon-container { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    .tambon-title { font-size: 15px; font-weight: 600; color: #2e7d32; margin-bottom: 10px; }
+    .tambon-select, .tambon-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #81c784; font-size: 15px; background: white; color: #333; outline: none; margin-bottom: 10px; }
+    .tambon-input:last-child { margin-bottom: 0; }
+
     .section-title { font-size: 17px; font-weight: 600; color: #1DB446; margin: 22px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8f5e9; display: flex; align-items: center; gap: 8px; }
     .section-desc { font-size: 14px; color: #555; margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 3px solid #1DB446; line-height: 1.5; }
 
@@ -53,6 +60,21 @@
 
   <div class="content">
     <form id="evalForm">
+      
+      <!-- ส่วนเลือกตำบลและกรอกหมู่ที่ อำเภอเวียงชัย -->
+      <div class="tambon-container">
+        <div class="tambon-title">📍 พื้นที่อยู่อาศัย (อ.เวียงชัย)</div>
+        <select id="tambonSelect" class="tambon-select" required>
+          <option value="" disabled selected>-- กรุณาเลือกตำบล --</option>
+          <option value="ตำบลเวียงชัย">ตำบลเวียงชัย</option>
+          <option value="ตำบลดอนศิลา">ตำบลดอนศิลา</option>
+          <option value="ตำบลผางาม">ตำบลผางาม</option>
+          <option value="ตำบลเวียงเหนือ">ตำบลเวียงเหนือ</option>
+          <option value="ตำบลเมืองชุม">ตำบลเมืองชุม</option>
+        </select>
+        <input type="text" id="mooInput" class="tambon-input" placeholder="ระบุหมู่ที่ (เช่น หมู่ 1 หรือ 1)" required>
+      </div>
+
       <!-- ส่วนที่ 1: 9Q -->
       <div class="section-title">🌱 ส่วนที่ 1: แบบประเมินโรคซึมเศร้า (9Q)</div>
       <div class="section-desc">ในช่วง 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</div>
@@ -161,6 +183,20 @@
       return;
     }
 
+    // ดึงค่าตำบลและหมู่ที่
+    const selectedTambon = document.getElementById("tambonSelect").value;
+    const inputMoo = document.getElementById("mooInput").value.trim();
+
+    if (!selectedTambon) {
+      alert("กรุณาเลือกตำบลที่ท่านอาศัยอยู่");
+      return;
+    }
+    if (!inputMoo) {
+      alert("กรุณาระบุหมู่ที่");
+      document.getElementById("mooInput").focus();
+      return;
+    }
+
     const btn = document.getElementById("submitBtn");
     btn.disabled = true;
     btn.innerText = "กำลังประมวลผล...";
@@ -215,21 +251,23 @@
       contactTextModal = "🚑 <b>ช่องทางขอความช่วยเหลือทันที:</b><br>• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
     }
 
-    // แสดงผล Pop-up บนเว็บ
+    // แสดงผล Pop-up บนเว็บ (เพิ่มแสดงตำบลและหมู่ที่)
     document.getElementById("modalTitleText").innerText = modalTitle;
-    document.getElementById("modalFeedbackText").innerHTML = `<b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceTextModal}`;
+    document.getElementById("modalFeedbackText").innerHTML = `<b>พื้นที่:</b> ${selectedTambon} ${inputMoo}<br><b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceTextModal}`;
     document.getElementById("modalContactText").innerHTML = contactTextModal;
     document.getElementById("resultModal").style.display = "flex";
 
     const formattedUser = `${userName} (${userId})`;
 
-    // ส่งข้อมูลเข้า Sheets
+    // ส่งข้อมูลเข้า Sheets (แนบตำบลและหมู่ที่ไปบันทึกด้วย)
     try {
       await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
           userId: formattedUser, 
+          tambon: selectedTambon, 
+          moo: inputMoo,
           score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
           feedback: adviceTextModal,
           colorLevel: currentRiskColor,
