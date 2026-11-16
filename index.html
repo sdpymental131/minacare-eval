@@ -92,7 +92,7 @@
   <div class="content">
     <form id="evalForm">
       
-      <!-- ส่วนเลือกตำบลและกรอกหมู่ที่ อำเภอเวียงชัย (ดีไซน์พรีเมียม บังคับกรอก และตัวเลขล้วน) -->
+      <!-- ส่วนเลือกตำบลและกรอกหมู่ที่ อำเภอเวียงชัย -->
       <div class="tambon-container">
         <div class="tambon-title">📍 ข้อมูลพื้นที่อยู่อาศัย (อำเภอเวียงชัย)</div>
         
@@ -108,9 +108,9 @@
           </select>
         </div>
 
-        <div class="input-group">
+        <div class="input-group" style="margin-top: 12px;">
           <label class="input-label">หมู่ที่ (ระบุเฉพาะตัวเลข)</label>
-          <input type="text" id="mooInput" class="tambon-input" placeholder="เช่น 1, 2, 3" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+          <input type="number" id="mooInput" class="tambon-input" placeholder="ระบุเฉพาะตัวเลข (เช่น 1, 2, 3)" min="1" max="99" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
         </div>
       </div>
 
