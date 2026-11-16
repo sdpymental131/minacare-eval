@@ -61,7 +61,7 @@
   <div class="content">
     <form id="evalForm">
       
-      <!-- ส่วนเลือกตำบลและกรอกหมู่ที่ อำเภอเวียงชัย -->
+      <!-- ส่วนเลือกตำบลและกรอกหมู่ที่ อำเภอเวียงชัย (บังคับเลือกและกรอกตัวเลข) -->
       <div class="tambon-container">
         <div class="tambon-title">📍 พื้นที่อยู่อาศัย (อ.เวียงชัย)</div>
         <select id="tambonSelect" class="tambon-select" required>
@@ -72,7 +72,7 @@
           <option value="ตำบลเวียงเหนือ">ตำบลเวียงเหนือ</option>
           <option value="ตำบลเมืองชุม">ตำบลเมืองชุม</option>
         </select>
-        <input type="text" id="mooInput" class="tambon-input" placeholder="ระบุหมู่ที่ (เช่น หมู่ 1 หรือ 1)" required>
+        <input type="number" id="mooInput" class="tambon-input" placeholder="ระบุหมู่ที่ (เฉพาะตัวเลข เช่น 1, 2, 3)" min="1" max="30" inputmode="numeric" required>
       </div>
 
       <!-- ส่วนที่ 1: 9Q -->
@@ -251,15 +251,15 @@
       contactTextModal = "🚑 <b>ช่องทางขอความช่วยเหลือทันที:</b><br>• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
     }
 
-    // แสดงผล Pop-up บนเว็บ (เพิ่มแสดงตำบลและหมู่ที่)
+    // แสดงผล Pop-up บนเว็บ
     document.getElementById("modalTitleText").innerText = modalTitle;
-    document.getElementById("modalFeedbackText").innerHTML = `<b>พื้นที่:</b> ${selectedTambon} ${inputMoo}<br><b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceTextModal}`;
+    document.getElementById("modalFeedbackText").innerHTML = `<b>พื้นที่:</b> ${selectedTambon} หมู่ที่ ${inputMoo}<br><b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceTextModal}`;
     document.getElementById("modalContactText").innerHTML = contactTextModal;
     document.getElementById("resultModal").style.display = "flex";
 
     const formattedUser = `${userName} (${userId})`;
 
-    // ส่งข้อมูลเข้า Sheets (แนบตำบลและหมู่ที่ไปบันทึกด้วย)
+    // ส่งข้อมูลเข้า Sheets
     try {
       await fetch(GAS_WEB_APP_URL, {
         method: "POST",
