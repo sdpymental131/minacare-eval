@@ -14,33 +14,33 @@
     .container { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
     
     .header { background: linear-gradient(135deg, #1DB446 0%, #108a33 100%); padding: 22px 16px; text-align: center; color: white; }
-    .header h2 { margin: 0; font-size: 20px; font-weight: 600; }
-    .header p { margin: 5px 0 0; font-size: 13px; opacity: 0.9; font-weight: 300; }
+    .header h2 { margin: 0; font-size: 22px; font-weight: 600; }
+    .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; font-weight: 300; }
 
     .content { padding: 16px; }
-    .section-title { font-size: 15px; font-weight: 600; color: #1DB446; margin: 22px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8f5e9; display: flex; align-items: center; gap: 8px; }
-    .section-desc { font-size: 12px; color: #666; margin-bottom: 12px; background: #f8fafc; padding: 10px; border-radius: 8px; border-left: 3px solid #1DB446; line-height: 1.4; }
+    .section-title { font-size: 17px; font-weight: 600; color: #1DB446; margin: 22px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8f5e9; display: flex; align-items: center; gap: 8px; }
+    .section-desc { font-size: 14px; color: #555; margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 3px solid #1DB446; line-height: 1.5; }
 
-    .question-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-    .question-title { font-size: 13px; font-weight: 500; color: #2d3748; margin-bottom: 10px; line-height: 1.4; }
+    .question-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+    .question-title { font-size: 15px; font-weight: 600; color: #2d3748; margin-bottom: 12px; line-height: 1.5; }
     
-    .options { display: flex; flex-direction: column; gap: 6px; }
-    .option-label { display: flex; align-items: center; padding: 10px 12px; background: #f8fafc; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s; }
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .option-label { display: flex; align-items: center; padding: 12px 14px; background: #f8fafc; border-radius: 10px; font-size: 15px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.2s; }
     .option-label:hover { background: #f1f5f9; }
-    .option-label input[type="radio"] { margin-right: 10px; accent-color: #1DB446; width: 18px; height: 18px; flex-shrink: 0; }
+    .option-label input[type="radio"] { margin-right: 12px; accent-color: #1DB446; width: 20px; height: 20px; flex-shrink: 0; }
 
-    .btn-submit { width: 100%; background: #1DB446; color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 12px rgba(29, 180, 70, 0.25); }
+    .btn-submit { width: 100%; background: #1DB446; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 12px rgba(29, 180, 70, 0.25); }
     .btn-submit:hover { background: #159b3a; }
     .btn-submit:disabled { background: #cbd5e1; box-shadow: none; }
 
     /* Modal Pop-up UI */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 15px; }
-    .modal-content { background: white; padding: 20px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: white; padding: 22px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
     
-    .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
-    .feedback-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; font-size: 13px; color: #334155; margin-bottom: 12px; line-height: 1.5; }
-    .contact-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; font-size: 12px; color: #475569; margin-bottom: 16px; line-height: 1.5; }
-    .close-btn { background: #1DB446; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+    .feedback-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 15px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+    .contact-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 14px; border-radius: 10px; font-size: 14px; color: #475569; margin-bottom: 16px; line-height: 1.6; }
+    .close-btn { background: #1DB446; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; }
   </style>
 </head>
 <body>
@@ -249,7 +249,7 @@
 
         if (currentRiskColor === "เขียว") {
           flexContents = [
-            { type: "text", text: "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี", weight: "bold", size: "md", color: "#1DB446", wrap: true },
+            { type: "text", text: "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี", weight: "bold", size: "lg", color: "#1DB446", wrap: true },
             { type: "separator", margin: "md" },
             {
               type: "box",
@@ -262,8 +262,8 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 1. คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
-                    { type: "text", text: "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ", size: "xs", color: "#64748B", wrap: true }
+                    { type: "text", text: "✅ 1. คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
+                    { type: "text", text: "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ", size: "sm", color: "#475569", wrap: true }
                   ]
                 },
                 {
@@ -271,8 +271,8 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 2. วิธีจัดการความเครียด", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
-                    { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", color: "#64748B", wrap: true }
+                    { type: "text", text: "✅ 2. วิธีจัดการความเครียด", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
+                    { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "sm", color: "#475569", wrap: true }
                   ]
                 },
                 {
@@ -280,8 +280,8 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 3. ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
-                    { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", color: "#64748B", wrap: true }
+                    { type: "text", text: "✅ 3. ข้อมูลช่องทางติดต่อ", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
+                    { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "sm", color: "#475569", wrap: true }
                   ]
                 },
                 {
@@ -289,8 +289,8 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 4. เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#2d3748", wrap: true },
-                    { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาวะทางอารมณ์อย่างต่อเนื่อง", size: "xs", color: "#64748B", wrap: true }
+                    { type: "text", text: "✅ 4. เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
+                    { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาวะทางอารมณ์อย่างต่อเนื่อง", size: "sm", color: "#475569", wrap: true }
                   ]
                 }
               ]
@@ -302,26 +302,26 @@
               margin: "md",
               spacing: "xs",
               contents: [
-                { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#475569", wrap: true },
-                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
+                { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "sm", color: "#334155", wrap: true },
+                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "sm", color: "#475569", wrap: true }
               ]
             }
           ];
         } else if (currentRiskColor === "เหลือง") {
           flexContents = [
-            { type: "text", text: "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม", weight: "bold", size: "md", color: "#EAB308", wrap: true },
+            { type: "text", text: "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม", weight: "bold", size: "lg", color: "#EAB308", wrap: true },
             { type: "separator", margin: "md" },
             { type: "text", text: "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา", size: "sm", margin: "md", color: "#334155", wrap: true },
             { type: "separator", margin: "md" },
-            { type: "text", text: "🤝 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "xs", margin: "md", color: "#475569", wrap: true }
+            { type: "text", text: "🤝 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "sm", margin: "md", color: "#475569", wrap: true }
           ];
         } else {
           flexContents = [
-            { type: "text", text: "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง", weight: "bold", size: "md", color: "#EF4444", wrap: true },
+            { type: "text", text: "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง", weight: "bold", size: "lg", color: "#EF4444", wrap: true },
             { type: "separator", margin: "md" },
             { type: "text", text: "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด", size: "sm", margin: "md", color: "#334155", wrap: true },
             { type: "separator", margin: "md" },
-            { type: "text", text: "🚑 ช่องทางขอความช่วยเหลือทันที:\n• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "xs", margin: "md", color: "#475569", wrap: true }
+            { type: "text", text: "🚑 ช่องทางขอความช่วยเหลือทันที:\n• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "sm", margin: "md", color: "#475569", wrap: true }
           ];
         }
 
