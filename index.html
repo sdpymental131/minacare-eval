@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>แบบประเมินสุขภาพใจ - MindCare SDPY</title>
-  <!-- โหลด LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <!-- Google Fonts: Prompt -->
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Prompt', sans-serif; word-wrap: break-word; overflow-wrap: break-word; }
@@ -19,7 +17,6 @@
 
     .content { padding: 16px; }
     
-    /* สไตล์สำหรับกล่องเลือกตำบลและหมู่ที่ (ดีไซน์ใหม่พรีเมียม สะอาดตา) */
     .tambon-container { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01); }
     .tambon-title { font-size: 15px; font-weight: 600; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
     
@@ -28,32 +25,15 @@
     .input-label { display: block; font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 5px; }
 
     .tambon-select, .tambon-input { 
-      width: 100%; 
-      padding: 14px 16px; 
-      border-radius: 10px; 
-      border: 1.5px solid #cbd5e1; 
-      font-size: 15px; 
-      background: white; 
-      color: #334155; 
-      outline: none; 
-      transition: all 0.2s ease;
+      width: 100%; padding: 14px 16px; border-radius: 10px; border: 1.5px solid #cbd5e1; 
+      font-size: 15px; background: white; color: #334155; outline: none; transition: all 0.2s ease;
     }
-    .tambon-select:focus, .tambon-input:focus { 
-      border-color: #1DB446; 
-      box-shadow: 0 0 0 3px rgba(29, 180, 70, 0.15); 
-    }
+    .tambon-select:focus, .tambon-input:focus { border-color: #1DB446; box-shadow: 0 0 0 3px rgba(29, 180, 70, 0.15); }
     
-    /* ตกแต่งลูกศร Dropdown ให้ดูโมเดิร์น */
     .tambon-select {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
+      appearance: none; -webkit-appearance: none; -moz-appearance: none;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      background-size: 18px;
-      padding-right: 40px;
-      cursor: pointer;
+      background-repeat: no-repeat; background-position: right 14px center; background-size: 18px; padding-right: 40px; cursor: pointer;
     }
 
     .section-title { font-size: 17px; font-weight: 600; color: #1DB446; margin: 22px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8f5e9; display: flex; align-items: center; gap: 8px; }
@@ -71,10 +51,12 @@
     .btn-submit:hover { background: #159b3a; }
     .btn-submit:disabled { background: #cbd5e1; box-shadow: none; }
 
+    .step-section { display: none; }
+    .step-section.active { display: block; }
+
     /* Modal Pop-up UI */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 15px; }
     .modal-content { background: white; padding: 22px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
-    
     .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
     .feedback-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 15px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
     .contact-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 14px; border-radius: 10px; font-size: 14px; color: #475569; margin-bottom: 16px; line-height: 1.6; }
@@ -86,16 +68,15 @@
 <div class="container">
   <div class="header">
     <h2>MindCare SDPY</h2>
-    <p>แบบประเมินคัดกรองสุขภาพใจ (9Q & 8Q)</p>
+    <p>แบบประเมินคัดกรองสุขภาพใจ</p>
   </div>
 
   <div class="content">
     <form id="evalForm">
       
-      <!-- ส่วนเลือกตำบลและกรอกหมู่ที่ อำเภอเวียงชัย -->
+      <!-- ข้อมูลพื้นที่ (แสดงทุกขั้นตอน) -->
       <div class="tambon-container">
         <div class="tambon-title">📍 ข้อมูลพื้นที่อยู่อาศัย (อำเภอเวียงชัย)</div>
-        
         <div class="input-group">
           <label class="input-label">ตำบล</label>
           <select id="tambonSelect" class="tambon-select" required>
@@ -107,24 +88,49 @@
             <option value="ตำบลเมืองชุม">ตำบลเมืองชุม</option>
           </select>
         </div>
-
         <div class="input-group" style="margin-top: 12px;">
           <label class="input-label">หมู่ที่ (ระบุเฉพาะตัวเลข)</label>
-          <input type="number" id="mooInput" class="tambon-input" placeholder="ระบุเฉพาะตัวเลข (เช่น 1, 2, 3)" min="1" max="99" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+          <input type="text" id="mooInput" class="tambon-input" placeholder="เช่น 1, 2, 3" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
         </div>
       </div>
 
-      <!-- ส่วนที่ 1: 9Q -->
-      <div class="section-title">🌱 ส่วนที่ 1: แบบประเมินโรคซึมเศร้า (9Q)</div>
-      <div class="section-desc">ในช่วง 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</div>
-      <div id="q9-container"></div>
+      <!-- ส่วนที่ 1: แบบประเมิน 2Q -->
+      <div id="step2q" class="step-section active">
+        <div class="section-title">🔍 คัดกรองโรคซึมเศร้าเบื้องต้น (2Q)</div>
+        <div class="section-desc">ใน 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านรู้สึก...</div>
+        <div class="question-card">
+          <div class="question-title">1. รู้สึกหดหู่ เศร้า หรือท้อแท้สิ้นหวังหรือไม่</div>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q2_1" value="0" required> ไม่มี</label>
+            <label class="option-label"><input type="radio" name="q2_1" value="1"> มี</label>
+          </div>
+        </div>
+        <div class="question-card">
+          <div class="question-title">2. รู้สึกเบื่อ ทำอะไรก็ไม่เพลิดเพลินหรือไม่</div>
+          <div class="options">
+            <label class="option-label"><input type="radio" name="q2_2" value="0" required> ไม่มี</label>
+            <label class="option-label"><input type="radio" name="q2_2" value="1"> มี</label>
+          </div>
+        </div>
+        <button type="button" class="btn-submit" onclick="nextTo9Q()">ถัดไป / ตรวจสอบผล</button>
+      </div>
 
-      <!-- ส่วนที่ 2: 8Q -->
-      <div class="section-title">🛡️ ส่วนที่ 2: แบบประเมินความเสี่ยงต่อการฆ่าตัวตาย (8Q)</div>
-      <div class="section-desc">ในช่วงที่ผ่านมา ท่านมีอาการหรือความคิดเหล่านี้หรือไม่?</div>
-      <div id="q8-container"></div>
+      <!-- ส่วนที่ 2: แบบประเมิน 9Q -->
+      <div id="step9q" class="step-section">
+        <div class="section-title">🌱 ส่วนที่ 2: แบบประเมินโรคซึมเศร้า (9Q)</div>
+        <div class="section-desc">ในช่วง 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</div>
+        <div id="q9-container"></div>
+        <button type="button" class="btn-submit" onclick="nextTo8QOrSubmit()">ถัดไป / ส่งแบบประเมิน</button>
+      </div>
 
-      <button type="submit" id="submitBtn" class="btn-submit">ส่งแบบประเมิน</button>
+      <!-- ส่วนที่ 3: แบบประเมิน 8Q -->
+      <div id="step8q" class="step-section">
+        <div class="section-title">🛡️ ส่วนที่ 3: แบบประเมินความเสี่ยงต่อการฆ่าตัวตาย (8Q)</div>
+        <div class="section-desc">ในช่วงที่ผ่านมา ท่านมีอาการหรือความคิดเหล่านี้หรือไม่?</div>
+        <div id="q8-container"></div>
+        <button type="submit" id="submitBtn" class="btn-submit">ส่งแบบประเมินฉบับสมบูรณ์</button>
+      </div>
+
     </form>
   </div>
 </div>
@@ -144,6 +150,7 @@
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXfCcEkCdXBI2fYwhp5uJEnFVZJSFfzL2C2OHcDF1FUf2Qx3rIOlU0TeaoQa4lZmUo/exec"; 
 
   let currentRiskColor = "เขียว";
+  let finalPayload = {};
 
   const questions9Q = [
     "1. เบื่อไม่สนใจอยากทำอะไร",
@@ -186,7 +193,7 @@
     questions9Q.forEach((qText, index) => {
       let html = `<div class="question-card"><div class="question-title">${qText}</div><div class="options">`;
       choices9Q.forEach(c => {
-        html += `<label class="option-label"><input type="radio" name="q9_${index+1}" value="${c.val}" required> ${c.label}</label>`;
+        html += `<label class="option-label"><input type="radio" name="q9_${index+1}" value="${c.val}"> ${c.label}</label>`;
       });
       html += `</div></div>`;
       q9Div.innerHTML += html;
@@ -195,7 +202,7 @@
     const q8Div = document.getElementById("q8-container");
     questions8Q.forEach((item, index) => {
       let html = `<div class="question-card"><div class="question-title">${item.q}</div><div class="options">`;
-      html += `<label class="option-label"><input type="radio" name="q8_${index+1}" value="0" required> ไม่มี</label>`;
+      html += `<label class="option-label"><input type="radio" name="q8_${index+1}" value="0"> ไม่มี</label>`;
       html += `<label class="option-label"><input type="radio" name="q8_${index+1}" value="${item.w}"> มี</label>`;
       html += `</div></div>`;
       q8Div.innerHTML += html;
@@ -205,223 +212,184 @@
   async function initializeLiff() {
     try {
       await liff.init({ liffId: LIFF_ID });
-      if (!liff.isLoggedIn()) {
-        liff.login();
-      }
-    } catch (err) {
-      console.error("LIFF Init Error:", err);
+      if (!liff.isLoggedIn()) { liff.login(); }
+    } catch (err) { console.error("LIFF Init Error:", err); }
+  }
+
+  async function nextTo9Q() {
+    const tambon = document.getElementById("tambonSelect").value;
+    const moo = document.getElementById("mooInput").value.trim();
+    if (!tambon || !moo) {
+      alert("กรุณาเลือกตำบลและระบุหมู่ที่ให้ครบถ้วนก่อนทำแบบประเมิน");
+      return;
+    }
+
+    const q2_1 = document.querySelector('input[name="q2_1"]:checked');
+    const q2_2 = document.querySelector('input[name="q2_2"]:checked');
+    if (!q2_1 || !q2_2) {
+      alert("กรุณาตอบคำถาม 2Q ให้ครบทุกข้อ");
+      return;
+    }
+
+    const score2Q = parseInt(q2_1.value) + parseInt(q2_2.value);
+
+    if (score2Q === 0) {
+      // 2Q ปกติ -> จบเลย ไม่ทำ 9Q ไม่แจ้งแอดมิน แต่ส่งเข้าแชทส่วนตัวผู้ทำ
+      currentRiskColor = "เขียว";
+      finalPayload = {
+        score2Q: score2Q, score9Q: "N/A", score8Q: "N/A",
+        colorLevel: currentRiskColor,
+        advice: "สุขภาพจิตอยู่ในเกณฑ์ปกติ มีการจัดการอารมณ์ที่ดี สามารถดูแลสุขภาพใจตนเองได้อย่างสม่ำเสมอ"
+      };
+      showModalAndSend(false);
+    } else {
+      document.getElementById("step2q").classList.remove("active");
+      document.getElementById("step9q").classList.add("active");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  async function nextTo8QOrSubmit() {
+    let score9Q = 0;
+    let allAnswered = true;
+    for (let i = 1; i <= 9; i++) {
+      const checked = document.querySelector(`input[name="q9_${i}"]:checked`);
+      if (!checked) { allAnswered = false; break; }
+      score9Q += parseInt(checked.value);
+    }
+    if (!allAnswered) {
+      alert("กรุณาตอบแบบประเมิน 9Q ให้ครบทุกข้อ");
+      return;
+    }
+
+    const q9_9Val = parseInt(document.querySelector('input[name="q9_9"]:checked').value);
+    let risk9Q = "เขียว";
+    if (score9Q >= 19) risk9Q = "แดง";
+    else if (score9Q >= 13) risk9Q = "เหลือง";
+
+    if (q9_9Val === 0) {
+      currentRiskColor = risk9Q;
+      let needNotify = (currentRiskColor !== "เขียว");
+      let adviceText = (currentRiskColor === "เขียว") ? "สุขภาพจิตอยู่ในเกณฑ์ปกติ" : ((currentRiskColor === "เหลือง") ? "มีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม ควรพักผ่อนและผ่อนคลาย" : "กำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง ทีมสุขภาพจิตกำลังรับทราบข้อมูล");
+
+      finalPayload = {
+        score2Q: "มีอาการ", score9Q: score9Q, score8Q: "N/A",
+        colorLevel: currentRiskColor,
+        advice: adviceText
+      };
+      showModalAndSend(needNotify);
+    } else {
+      document.getElementById("step9q").classList.remove("active");
+      document.getElementById("step8q").classList.add("active");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
   document.getElementById("evalForm").addEventListener("submit", async function(e) {
     e.preventDefault();
-    
-    if (!liff.isLoggedIn()) {
-      alert("กรุณาเข้าสู่ระบบ LINE ก่อนทำแบบประเมิน");
-      liff.login();
+
+    let score9Q = 0;
+    for (let i = 1; i <= 9; i++) { score9Q += parseInt(document.querySelector(`input[name="q9_${i}"]:checked`).value); }
+
+    let score8Q = 0;
+    let allAnswered8 = true;
+    for (let i = 1; i <= questions8Q.length; i++) {
+      const checked = document.querySelector(`input[name="q8_${i}"]:checked`);
+      if (!checked) { allAnswered8 = false; break; }
+      score8Q += parseInt(checked.value);
+    }
+    if (!allAnswered8) {
+      alert("กรุณาตอบแบบประเมิน 8Q ให้ครบทุกข้อ");
       return;
     }
 
-    // ดึงค่าตำบลและหมู่ที่
+    let risk9Q = "เขียว";
+    if (score9Q >= 19) risk9Q = "แดง";
+    else if (score9Q >= 13) risk9Q = "เหลือง";
+
+    let risk8Q = "เขียว";
+    if (score8Q >= 9 || score9Q >= 19) risk8Q = "แดง";
+    else if (score8Q > 0 || score9Q >= 13) risk8Q = "เหลือง";
+
+    if (risk8Q === "แดง" || risk9Q === "แดง") currentRiskColor = "แดง";
+    else if (risk8Q === "เหลือง" || risk9Q === "เหลือง") currentRiskColor = "เหลือง";
+    else currentRiskColor = "เขียว";
+
+    let needNotify = (currentRiskColor !== "เขียว");
+    let adviceText = (currentRiskColor === "เขียว") ? "สุขภาพจิตอยู่ในเกณฑ์ดี" : ((currentRiskColor === "เหลือง") ? "มีภาวะเครียดสะสม ควรผ่อนคลายหรือปรึกษาเจ้าหน้าที่" : "มีความเครียดหรือความเสี่ยงสูง ทางทีมสุขภาพจิตจะเร่งประสานงานดูแล");
+
+    finalPayload = {
+      score2Q: "มีอาการ", score9Q: score9Q, score8Q: score8Q,
+      colorLevel: currentRiskColor,
+      advice: adviceText
+    };
+
+    showModalAndSend(needNotify);
+  });
+
+  async function showModalAndSend(needNotifyAdmin) {
     const selectedTambon = document.getElementById("tambonSelect").value;
     const inputMoo = document.getElementById("mooInput").value.trim();
 
-    if (!selectedTambon) {
-      alert("กรุณาเลือกตำบลที่ท่านอาศัยอยู่");
-      return;
-    }
-    if (!inputMoo) {
-      alert("กรุณาระบุหมู่ที่");
-      document.getElementById("mooInput").focus();
-      return;
-    }
-
-    const btn = document.getElementById("submitBtn");
-    btn.disabled = true;
-    btn.innerText = "กำลังประมวลผล...";
-
-    let userName = "ไม่ระบุชื่อ";
-    let userId = "ไม่ระบุ ID";
-
-    try {
-      const idToken = liff.getDecodedIDToken();
-      if (idToken) {
-        userName = idToken.name || "ไม่ระบุชื่อ";
-        userId = idToken.sub || "ไม่ระบุ ID";
-      } else {
-        const profile = await liff.getProfile();
-        userName = profile.displayName || "ไม่ระบุชื่อ";
-        userId = profile.userId || "ไม่ระบุ ID";
-      }
-    } catch (err) {
-      console.error("Get User Info Error:", err);
-    }
-
-    let score9Q = 0;
-    for (let i = 1; i <= 9; i++) {
-      score9Q += parseInt(document.querySelector(`input[name="q9_${i}"]:checked`).value);
-    }
-
-    let score8Q = 0;
-    for (let i = 1; i <= questions8Q.length; i++) {
-      score8Q += parseInt(document.querySelector(`input[name="q8_${i}"]:checked`).value);
-    }
-
-    currentRiskColor = "เขียว";
-    if (score8Q > 0 || score9Q >= 13) {
-      currentRiskColor = (score8Q >= 9 || score9Q >= 19) ? "แดง" : "เหลือง";
-    }
-
     let modalTitle = "";
-    let adviceTextModal = "";
     let contactTextModal = "";
 
     if (currentRiskColor === "เขียว") {
       modalTitle = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
-      adviceTextModal = "มีการจัดการอารมณ์ที่ดีและมีความเข้มแข็งทางจิตใจ สามารถดูแลสุขภาพใจของตนเองได้อย่างสม่ำเสมอ";
-      contactTextModal = "📌 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
+      contactTextModal = "📌 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)";
     } else if (currentRiskColor === "เหลือง") {
       modalTitle = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
-      adviceTextModal = "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา";
-      contactTextModal = "🤝 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
+      contactTextModal = "🤝 <b>ช่องทางขอคำปรึกษาเพิ่มเติม:</b><br>• โรงพยาบาลใกล้บ้าน หรือสายด่วน 1323";
     } else {
-      modalTitle = "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง";
-      adviceTextModal = "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด";
-      contactTextModal = "🚑 <b>ช่องทางขอความช่วยเหลือทันที:</b><br>• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน<br>• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)<br>• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)";
+      modalTitle = "🔴 คุณกำลังเผชิญความทุกข์ใจระดับสูง";
+      contactTextModal = "🚑 <b>ช่องทางช่วยเหลือฉุกเฉิน:</b><br>• โรงพยาบาลใกล้บ้าน หรือสายด่วน 1323 / 1669";
     }
 
-    // แสดงผล Pop-up บนเว็บ
     document.getElementById("modalTitleText").innerText = modalTitle;
-    document.getElementById("modalFeedbackText").innerHTML = `<b>พื้นที่:</b> ${selectedTambon} หมู่ที่ ${inputMoo}<br><b>คะแนนประเมิน:</b> 9Q = ${score9Q}, 8Q = ${score8Q}<br><br><b>คำแนะนำ:</b> ${adviceTextModal}`;
+    document.getElementById("modalFeedbackText").innerHTML = `<b>พื้นที่:</b> ${selectedTambon} หมู่ที่ ${inputMoo}<br><br><b>คำแนะนำ:</b> ${finalPayload.advice}`;
     document.getElementById("modalContactText").innerHTML = contactTextModal;
     document.getElementById("resultModal").style.display = "flex";
 
-    const formattedUser = `${userName} (${userId})`;
+    let userName = "ไม่ระบุชื่อ";
+    let userId = "ไม่ระบุ ID";
+    try {
+      if (liff.isLoggedIn()) {
+        const idToken = liff.getDecodedIDToken();
+        userName = idToken ? (idToken.name || "ไม่ระบุ") : (await liff.getProfile()).displayName;
+        userId = idToken ? (idToken.sub || "ไม่ระบุ") : (await liff.getProfile()).userId;
+      }
+    } catch(e) {}
 
-    // ส่งข้อมูลเข้า Sheets
     try {
       await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
-          userId: formattedUser, 
-          tambon: selectedTambon, 
+          userId: `${userName} (${userId})`,
+          tambon: selectedTambon,
           moo: inputMoo,
-          score: `9Q: ${score9Q}, 8Q: ${score8Q}`,
-          feedback: adviceTextModal,
+          score: `2Q: ${finalPayload.score2Q}, 9Q: ${finalPayload.score9Q}, 8Q: ${finalPayload.score8Q}`,
+          feedback: finalPayload.advice,
           colorLevel: currentRiskColor,
-          modalTitle: modalTitle
+          modalTitle: modalTitle,
+          notifyAdmin: needNotifyAdmin
         })
       });
-    } catch (err) { 
-      console.error("Sheets Error:", err); 
-    }
-  });
+    } catch(err) { console.error(err); }
+  }
 
   async function closeModalAndFinish() {
     document.getElementById("resultModal").style.display = "none";
     if (liff.isInClient()) {
       try {
-        let flexContents = [];
-
-        if (currentRiskColor === "เขียว") {
-          flexContents = [
-            { type: "text", text: "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี", weight: "bold", size: "lg", color: "#1DB446", wrap: true },
-            { type: "separator", margin: "md" },
-            {
-              type: "box",
-              layout: "vertical",
-              margin: "md",
-              spacing: "md",
-              contents: [
-                {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "xs",
-                  contents: [
-                    { type: "text", text: "✅ 1. คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
-                    { type: "text", text: "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ", size: "sm", color: "#475569", wrap: true }
-                  ]
-                },
-                {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "xs",
-                  contents: [
-                    { type: "text", text: "✅ 2. วิธีจัดการความเครียด", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
-                    { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "sm", color: "#475569", wrap: true }
-                  ]
-                },
-                {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "xs",
-                  contents: [
-                    { type: "text", text: "✅ 3. ข้อมูลช่องทางติดต่อ", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
-                    { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "sm", color: "#475569", wrap: true }
-                  ]
-                },
-                {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "xs",
-                  contents: [
-                    { type: "text", text: "✅ 4. เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "sm", color: "#2d3748", wrap: true },
-                    { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาวะทางอารมณ์อย่างต่อเนื่อง", size: "sm", color: "#475569", wrap: true }
-                  ]
-                }
-              ]
-            },
-            { type: "separator", margin: "md" },
-            {
-              type: "box",
-              layout: "vertical",
-              margin: "md",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "sm", color: "#334155", wrap: true },
-                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "sm", color: "#475569", wrap: true }
-              ]
-            }
-          ];
-        } else if (currentRiskColor === "เหลือง") {
-          flexContents = [
-            { type: "text", text: "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม", weight: "bold", size: "lg", color: "#EAB308", wrap: true },
-            { type: "separator", margin: "md" },
-            { type: "text", text: "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา", size: "sm", margin: "md", color: "#334155", wrap: true },
-            { type: "separator", margin: "md" },
-            { type: "text", text: "🤝 ช่องทางขอคำปรึกษาเพิ่มเติม:\n• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "sm", margin: "md", color: "#475569", wrap: true }
-          ];
-        } else {
-          flexContents = [
-            { type: "text", text: "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง", weight: "bold", size: "lg", color: "#EF4444", wrap: true },
-            { type: "separator", margin: "md" },
-            { type: "text", text: "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด", size: "sm", margin: "md", color: "#334155", wrap: true },
-            { type: "separator", margin: "md" },
-            { type: "text", text: "🚑 ช่องทางขอความช่วยเหลือทันที:\n• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "sm", margin: "md", color: "#475569", wrap: true }
-          ];
-        }
-
+        let iconSymbol = currentRiskColor === "เขียว" ? "🟢" : (currentRiskColor === "เหลือง" ? "🟡" : "🔴");
         await liff.sendMessages([{
-          type: "flex",
-          altText: "สรุปผลการประเมินสุขภาพใจ MindCare SDPY",
-          contents: {
-            type: "bubble",
-            body: {
-              type: "box",
-              layout: "vertical",
-              contents: flexContents
-            }
-          }
+          type: "text",
+          text: `ผลการประเมินสุขภาพใจ MindCare SDPY ของท่าน:\nสถานะ: ${iconSymbol} กลุ่ม${currentRiskColor}\nคำแนะนำ: ${finalPayload.advice}\n\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)`
         }]);
-        liff.closeWindow();
-      } catch (err) {
-        alert("ส่งข้อความเข้าแชทไม่สำเร็จ: " + err.message);
-        liff.closeWindow();
-      }
-    } else {
-      liff.closeWindow();
+      } catch(e) {}
     }
+    liff.closeWindow();
   }
 </script>
 
