@@ -401,13 +401,24 @@
     document.getElementById("resultModal").style.display = "none";
     if (liff.isInClient()) {
       try {
-        let headerColor = currentRiskColor === "เขียว" ? "#10B981" : (currentRiskColor === "เหลือง" ? "#F59E0B" : "#EF4444");
-        let headerText = currentRiskColor === "เขียว" ? "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี" : (currentRiskColor === "เหลือง" ? "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม" : "🔴 คุณกำลังเผชิญความทุกข์ใจระดับสูง");
+        // แปลงค่าสีให้เป็นตัวพิมพ์เล็กและตัดช่องว่าง เพื่อป้องกันปัญหาเงื่อนไขคลาดเคลื่อน
+        let riskColor = (currentRiskColor || "").toString().trim().toLowerCase();
+        
+        let headerColor = "#10B981";
+        let headerText = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
+
+        if (riskColor.includes("แดง") || riskColor.includes("red")) {
+          headerColor = "#EF4444";
+          headerText = "🔴 คุณกำลังเผชิญความทุกข์ใจระดับสูง";
+        } else if (riskColor.includes("เหลือง") || riskColor.includes("yellow")) {
+          headerColor = "#F59E0B";
+          headerText = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
+        }
 
         let bubbleBodyContents = [];
 
-        if (currentRiskColor === "แดง") {
-          // รูปแบบสำหรับสีแดง (แบบกระชับ)
+        // เช็คเงื่อนไขสำหรับ "สีแดง" (แบบกระชับตามรูปที่ถูกต้อง)
+        if (riskColor.includes("แดง") || riskColor.includes("red")) {
           bubbleBodyContents = [
             {
               type: "text",
@@ -427,8 +438,9 @@
               ]
             }
           ];
-        } else if (currentRiskColor === "เหลือง") {
-          // รูปแบบสำหรับสีเหลือง (แบบกระชับตามรูปตัวอย่างล่าสุด)
+        } 
+        // เช็คเงื่อนไขสำหรับ "สีเหลือง" (แบบกระชับ)
+        else if (riskColor.includes("เหลือง") || riskColor.includes("yellow")) {
           bubbleBodyContents = [
             {
               type: "text",
@@ -448,8 +460,9 @@
               ]
             }
           ];
-        } else {
-          // รูปแบบสำหรับสีเขียว (แบบ 4 ข้อคำแนะนำ พร้อมรหัสอ้างอิง)
+        } 
+        // เช็คเงื่อนไขสำหรับ "สีเขียว" (แบบ 4 ข้อคำแนะนำ พร้อมรหัสอ้างอิง)
+        else {
           let randomRefId = Math.floor(10000000000 + Math.random() * 90000000000);
           bubbleBodyContents = [
             {
@@ -505,7 +518,7 @@
           ];
         }
 
-        // ส่ง Flex Message ส่วนตัว
+        // ส่ง Flex Message ส่วนตัวไปยัง LINE
         await liff.sendMessages([{
           type: "flex",
           altText: "ผลการประเมินสุขภาพใจ MindCare SDPY",
