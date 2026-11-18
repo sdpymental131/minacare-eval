@@ -260,7 +260,6 @@
       };
       showModalAndSend(false);
     } else {
-      // ซ่อนช่องตำบลและหมู่ที่เมื่อข้ามไปหน้า 9Q
       document.getElementById("tambonBox").style.display = "none";
       document.getElementById("step2q").classList.remove("active");
       document.getElementById("step9q").classList.add("active");
@@ -401,10 +400,25 @@
     document.getElementById("resultModal").style.display = "none";
     if (liff.isInClient()) {
       try {
-        let headerColor = currentRiskColor === "เขียว" ? "#10B981" : (currentRiskColor === "เหลือง" ? "#F59E0B" : "#EF4444");
-        let headerText = currentRiskColor === "เขียว" ? "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี" : (currentRiskColor === "เหลือง" ? "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม" : "🔴 คุณกำลังเผชิญความทุกข์ใจระดับสูง");
+        let headerColor = "";
+        let headerText = "";
+        let adviceHeading = "";
 
-        // ส่ง Flex Message ส่วนตัวเป็นการ์ดสวยงามเหมือนในรูปที่ต้องการ
+        if (currentRiskColor === "เขียว") {
+          headerColor = "#10B981";
+          headerText = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
+          adviceHeading = "✅ คำแนะนำและการดูแลตนเอง";
+        } else if (currentRiskColor === "เหลือง") {
+          headerColor = "#F59E0B";
+          headerText = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
+          adviceHeading = "✅ คำแนะนำและการดูแลเบื้องต้น";
+        } else {
+          headerColor = "#EF4444";
+          headerText = "🔴 คุณกำลังเผชิญความทุกข์ใจระดับสูง";
+          adviceHeading = "✅ คำแนะนำและการดูแลเร่งด่วน";
+        }
+
+        // ส่ง Flex Message ส่วนตัวแยกตามระดับสีและดึง advice ที่ถูกต้องตามสีนั้น ๆ
         await liff.sendMessages([{
           type: "flex",
           altText: "ผลการประเมินสุขภาพใจ MindCare SDPY",
@@ -429,7 +443,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 1. คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: adviceHeading, weight: "bold", size: "xs", color: "#047857" },
                     { type: "text", text: finalPayload.advice, size: "xs", color: "#334155", wrap: true }
                   ]
                 },
@@ -439,7 +453,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 2. วิธีจัดการความเครียด", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "✅ วิธีจัดการความเครียด / อารมณ์", weight: "bold", size: "xs", color: "#047857" },
                     { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", color: "#334155", wrap: true }
                   ]
                 },
@@ -449,7 +463,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 3. ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "✅ ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#047857" },
                     { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", color: "#334155", wrap: true }
                   ]
                 },
@@ -459,7 +473,7 @@
                   layout: "vertical",
                   spacing: "xs",
                   contents: [
-                    { type: "text", text: "✅ 4. เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "✅ เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#047857" },
                     { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาพทางอารมณ์อย่างต่อเนื่อง", size: "xs", color: "#334155", wrap: true }
                   ]
                 },
