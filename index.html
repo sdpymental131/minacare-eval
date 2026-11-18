@@ -254,7 +254,7 @@
     if (score2Q === 0) {
       currentRiskColor = "เขียว";
       finalPayload = {
-        score2Q: score2Q, score9Q: "N/A", score8Q: "N/A",
+        score2Q: score2Q, score9Q: "0", score8Q: "0",
         colorLevel: currentRiskColor,
         advice: "สุขภาพจิตอยู่ในเกณฑ์ปกติ มีการจัดการอารมณ์ที่ดี สามารถดูแลสุขภาพใจตนเองได้อย่างสม่ำเสมอ"
       };
@@ -292,7 +292,7 @@
       let adviceText = (currentRiskColor === "เขียว") ? "สุขภาพจิตอยู่ในเกณฑ์ปกติ" : ((currentRiskColor === "เหลือง") ? "มีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม ควรพักผ่อนและผ่อนคลาย" : "กำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง ทีมสุขภาพจิตกำลังรับทราบข้อมูล");
 
       finalPayload = {
-        score2Q: "มีอาการ", score9Q: score9Q, score8Q: "N/A",
+        score2Q: "มีอาการ", score9Q: score9Q, score8Q: "0",
         colorLevel: currentRiskColor,
         advice: adviceText
       };
