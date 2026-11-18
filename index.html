@@ -7,7 +7,7 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; font-family: 'Prompt', sans-serif; word-wrap: break-word; overflow-wrap: break-word; }
+- { box-sizing: border-box; font-family: 'Prompt', sans-serif; word-wrap: break-word; overflow-wrap: break-word; }
     body { background-color: #f0f4f8; margin: 0; padding: 12px; color: #333; }
     .container { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
     
@@ -160,8 +160,6 @@
 
   let currentRiskColor = "เขียว";
   let finalPayload = {};
-  let rawUserId = "";
-  let rawUserName = "ไม่ระบุชื่อ";
 
   const questions9Q = [
     "1. เบื่อไม่สนใจอยากทำอะไร",
@@ -232,13 +230,7 @@
   async function initializeLiff() {
     try {
       await liff.init({ liffId: LIFF_ID });
-      if (!liff.isLoggedIn()) { 
-        liff.login(); 
-      } else {
-        const profile = await liff.getProfile();
-        rawUserId = profile.userId;
-        rawUserName = profile.displayName;
-      }
+      if (!liff.isLoggedIn()) { liff.login(); }
     } catch (err) { console.error("LIFF Init Error:", err); }
   }
 
@@ -264,7 +256,7 @@
       finalPayload = {
         score2Q: score2Q, score9Q: "N/A", score8Q: "N/A",
         colorLevel: currentRiskColor,
-        advice: "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ"
+        advice: "สุขภาพจิตอยู่ในเกณฑ์ปกติ มีการจัดการอารมณ์ที่ดี สามารถดูแลสุขภาพใจตนเองได้อย่างสม่ำเสมอ"
       };
       showModalAndSend(false);
     } else {
@@ -296,7 +288,7 @@
     if (q9_9Val === 0) {
       currentRiskColor = risk9Q;
       let needNotify = (currentRiskColor !== "เขียว");
-      let adviceText = (currentRiskColor === "เขียว") ? "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ" : ((currentRiskColor === "เหลือง") ? "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา" : "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด");
+      let adviceText = (currentRiskColor === "เขียว") ? "สุขภาพจิตอยู่ในเกณฑ์ปกติ" : ((currentRiskColor === "เหลือง") ? "มีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม ควรพักผ่อนและผ่อนคลาย" : "กำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง ทีมสุขภาพจิตกำลังรับทราบข้อมูล");
 
       finalPayload = {
         score2Q: "มีอาการ", score9Q: score9Q, score8Q: "N/A",
@@ -342,7 +334,7 @@
     else currentRiskColor = "เขียว";
 
     let needNotify = (currentRiskColor !== "เขียว");
-    let adviceText = (currentRiskColor === "เขียว") ? "หมั่นสำรวจอารมณ์ตนเอง เปิดรับข้อมูลสุขภาพจิต และตระหนักรู้การเปลี่ยนแปลงทางจิตใจอย่างสม่ำเสมอ" : ((currentRiskColor === "เหลือง") ? "ควรเพิ่มเวลาพักผ่อน ผ่อนคลายความเครียด และทำกิจกรรมที่ช่วยฟื้นฟูสภาพจิตใจ หากต้องการคนรับฟัง สามารถขอรับคำปรึกษาผ่านช่องทางแชทนี้ได้ตลอดเวลา" : "ทางทีมสุขภาพจิตได้รับข้อมูลแล้ว และกำลังเร่งประสานงานเพื่อดูแลอย่างใกล้ชิด");
+    let adviceText = (currentRiskColor === "เขียว") ? "สุขภาพจิตอยู่ในเกณฑ์ดี" : ((currentRiskColor === "เหลือง") ? "มีภาวะเครียดสะสม ควรผ่อนคลายหรือปรึกษาเจ้าหน้าที่" : "มีความเครียดหรือความเสี่ยงสูง ทางทีมสุขภาพจิตจะเร่งประสานงานดูแล");
 
     finalPayload = {
       score2Q: "มีอาการ", score9Q: score9Q, score8Q: score8Q,
@@ -376,11 +368,13 @@
     document.getElementById("modalContactText").innerHTML = contactTextModal;
     document.getElementById("resultModal").style.display = "flex";
 
+    let userName = "ไม่ระบุชื่อ";
+    let userId = "ไม่ระบุ ID";
     try {
       if (liff.isLoggedIn()) {
-        const profile = await liff.getProfile();
-        rawUserName = profile.displayName || "ไม่ระบุ";
-        rawUserId = profile.userId;
+        const idToken = liff.getDecodedIDToken();
+        userName = idToken ? (idToken.name || "ไม่ระบุ") : (await liff.getProfile()).displayName;
+        userId = idToken ? (idToken.sub || "ไม่ระบุ") : (await liff.getProfile()).userId;
       }
     } catch(e) {}
 
@@ -389,8 +383,7 @@
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
-          lineUserId: rawUserId,
-          userName: rawUserName,
+          userId: `${userName} (${userId})`,
           tambon: selectedTambon,
           moo: inputMoo,
           score: `2Q: ${finalPayload.score2Q}, 9Q: ${finalPayload.score9Q}, 8Q: ${finalPayload.score8Q}`,
@@ -403,11 +396,107 @@
     } catch(err) { console.error(err); }
   }
 
-  function closeModalAndFinish() {
+  async function closeModalAndFinish() {
     document.getElementById("resultModal").style.display = "none";
+    if (liff.isInClient()) {
+      try {
+        let headerColor = "";
+        let headerText = "";
+        let adviceHeading = "";
+
+        if (currentRiskColor === "เขียว") {
+          headerColor = "#10B981";
+          headerText = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
+          adviceHeading = "✅ คำแนะนำและการดูแลตนเอง";
+        } else if (currentRiskColor === "เหลือง") {
+          headerColor = "#F59E0B";
+          headerText = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
+          adviceHeading = "✅ คำแนะนำและการดูแลเบื้องต้น";
+        } else {
+          headerColor = "#EF4444";
+          headerText = "🔴 คุณกำลังเผชิญความทุกข์ใจระดับสูง";
+          adviceHeading = "✅ คำแนะนำและการดูแลเร่งด่วน";
+        }
+
+        // ส่ง Flex Message ส่วนตัวแยกตามระดับสีและดึง advice ที่ถูกต้องตามสีนั้น ๆ
+        await liff.sendMessages([{
+          type: "flex",
+          altText: "ผลการประเมินสุขภาพใจ MindCare SDPY",
+          contents: {
+            type: "bubble",
+            header: {
+              type: "box",
+              layout: "vertical",
+              backgroundColor: headerColor,
+              paddingAll: "15px",
+              contents: [
+                { type: "text", text: headerText, weight: "bold", color: "#FFFFFF", size: "sm", wrap: true }
+              ]
+            },
+            body: {
+              type: "box",
+              layout: "vertical",
+              spacing: "md",
+              contents: [
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: adviceHeading, weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: finalPayload.advice, size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "sm" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "✅ วิธีจัดการความเครียด / อารมณ์", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "sm" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "✅ ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "sm" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "✅ เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาพทางอารมณ์อย่างต่อเนื่อง", size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "md" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#B91C1C" },
+                    { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
+                  ]
+                }
+              ]
+            }
+          }
+        }]);
+      } catch(e) {}
+    }
     liff.closeWindow();
   }
 </script>
 
 </body>
 </html>
+ตอนนี้เอาโค้ดนี้มาใช้แทนแล้ว แต่คำแนะนำในข้อความที่ส่งมายังไม่ถูกต้อง
