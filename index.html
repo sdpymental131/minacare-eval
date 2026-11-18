@@ -54,7 +54,7 @@
     .step-section { display: none; }
     .step-section.active { display: block; }
 
-    /* Modal Pop-up UI */
+    /* Modal Pop-up UI ทั่วไป */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 15px; }
     .modal-content { background: white; padding: 22px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
@@ -135,6 +135,15 @@
   </div>
 </div>
 
+<!-- Modal สำหรับแจ้งเตือน (แทน alert เดิม) -->
+<div id="warningModal" class="modal">
+  <div class="modal-content" style="max-width: 380px; text-align: center;">
+    <div class="modal-title" style="color: #eab308; margin-bottom: 8px;">⚠️ แจ้งเตือนข้อความ</div>
+    <div id="warningModalText" class="feedback-box" style="margin-bottom: 16px; text-align: center; background: #fefce8; border-color: #fde047;">-</div>
+    <button class="close-btn" onclick="closeWarningModal()" style="background: #1DB446;">รับทราบ</button>
+  </div>
+</div>
+
 <!-- Modal Pop-up สรุปผล -->
 <div id="resultModal" class="modal">
   <div class="modal-content">
@@ -188,6 +197,16 @@
     initializeLiff();
   };
 
+  // ฟังก์ชันแสดงกล่องแจ้งเตือนสวยๆ แทน alert() เดิม
+  function showWarning(msg) {
+    document.getElementById("warningModalText").innerText = msg;
+    document.getElementById("warningModal").style.display = "flex";
+  }
+
+  function closeWarningModal() {
+    document.getElementById("warningModal").style.display = "none";
+  }
+
   function renderQuestions() {
     const q9Div = document.getElementById("q9-container");
     questions9Q.forEach((qText, index) => {
@@ -220,21 +239,20 @@
     const tambon = document.getElementById("tambonSelect").value;
     const moo = document.getElementById("mooInput").value.trim();
     if (!tambon || !moo) {
-      alert("กรุณาเลือกตำบลและระบุหมู่ที่ให้ครบถ้วนก่อนทำแบบประเมิน");
+      showWarning("กรุณาเลือกตำบลและระบุหมู่ที่ให้ครบถ้วนก่อนทำแบบประเมิน");
       return;
     }
 
     const q2_1 = document.querySelector('input[name="q2_1"]:checked');
     const q2_2 = document.querySelector('input[name="q2_2"]:checked');
     if (!q2_1 || !q2_2) {
-      alert("กรุณาตอบคำถาม 2Q ให้ครบทุกข้อ");
+      showWarning("กรุณาตอบคำถาม 2Q ให้ครบทุกข้อ");
       return;
     }
 
     const score2Q = parseInt(q2_1.value) + parseInt(q2_2.value);
 
     if (score2Q === 0) {
-      // 2Q ปกติ -> จบเลย ไม่ทำ 9Q ไม่แจ้งแอดมิน แต่ส่งเข้าแชทส่วนตัวผู้ทำ
       currentRiskColor = "เขียว";
       finalPayload = {
         score2Q: score2Q, score9Q: "N/A", score8Q: "N/A",
@@ -258,7 +276,7 @@
       score9Q += parseInt(checked.value);
     }
     if (!allAnswered) {
-      alert("กรุณาตอบแบบประเมิน 9Q ให้ครบทุกข้อ");
+      showWarning("กรุณาตอบแบบประเมิน 9Q ให้ครบทุกข้อ");
       return;
     }
 
@@ -299,7 +317,7 @@
       score8Q += parseInt(checked.value);
     }
     if (!allAnswered8) {
-      alert("กรุณาตอบแบบประเมิน 8Q ให้ครบทุกข้อ");
+      showWarning("กรุณาตอบแบบประเมิน 8Q ให้ครบทุกข้อ");
       return;
     }
 
