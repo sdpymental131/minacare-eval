@@ -7,7 +7,7 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; font-family: 'Prompt', sans-serif; word-wrap: break-word; overflow-wrap: break-word; }
+- { box-sizing: border-box; font-family: 'Prompt', sans-serif; word-wrap: break-word; overflow-wrap: break-word; }
     body { background-color: #f0f4f8; margin: 0; padding: 12px; color: #333; }
     .container { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
     
@@ -54,7 +54,7 @@
     .step-section { display: none; }
     .step-section.active { display: block; }
 
-    /* Modal สำหรับแจ้งเตือน */
+    /* Modal แจ้งเตือนและสรุปผล */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 15px; }
     .modal-content { background: white; padding: 22px; border-radius: 16px; width: 100%; max-width: 450px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
@@ -74,7 +74,7 @@
   <div class="content">
     <form id="evalForm">
       
-      <!-- ข้อมูลพื้นที่ (จะถูกซ่อนอัตโนมัติเมื่อไปหน้า 9Q / 8Q) -->
+      <!-- ข้อมูลพื้นที่ (จะซ่อนอัตโนมัติเมื่อไปหน้า 9Q / 8Q) -->
       <div id="tambonBox" class="tambon-container">
         <div class="tambon-title">📍 ข้อมูลพื้นที่อยู่อาศัย (อำเภอเวียงชัย)</div>
         <div class="input-group">
@@ -135,7 +135,7 @@
   </div>
 </div>
 
-<!-- Modal สำหรับแจ้งเตือน -->
+<!-- Modal แจ้งเตือนแทน alert -->
 <div id="warningModal" class="modal">
   <div class="modal-content" style="max-width: 380px; text-align: center;">
     <div class="modal-title" style="color: #eab308; margin-bottom: 8px;">⚠️ แจ้งเตือนข้อความ</div>
@@ -144,7 +144,7 @@
   </div>
 </div>
 
-<!-- Modal Pop-up สรุปผล -->
+<!-- Modal สรุปผล -->
 <div id="resultModal" class="modal">
   <div class="modal-content">
     <div class="modal-title" id="modalTitleText">🌿 สรุปผลประเมิน MindCare</div>
@@ -260,7 +260,6 @@
       };
       showModalAndSend(false);
     } else {
-      // ซ่อนช่องตำบลและหมู่ที่เมื่อไปหน้า 9Q
       document.getElementById("tambonBox").style.display = "none";
       document.getElementById("step2q").classList.remove("active");
       document.getElementById("step9q").classList.add("active");
@@ -401,10 +400,96 @@
     document.getElementById("resultModal").style.display = "none";
     if (liff.isInClient()) {
       try {
-        let iconSymbol = currentRiskColor === "เขียว" ? "🟢" : (currentRiskColor === "เหลือง" ? "🟡" : "🔴");
+        let headerColor = "";
+        let headerText = "";
+        let adviceHeading = "";
+
+        if (currentRiskColor === "เขียว") {
+          headerColor = "#10B981";
+          headerText = "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี";
+          adviceHeading = "✅ คำแนะนำและการดูแลตนเอง";
+        } else if (currentRiskColor === "เหลือง") {
+          headerColor = "#F59E0B";
+          headerText = "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม";
+          adviceHeading = "✅ คำแนะนำและการดูแลเบื้องต้น";
+        } else {
+          headerColor = "#EF4444";
+          headerText = "🔴 คุณกำลังเผชิญความทุกข์ใจระดับสูง";
+          adviceHeading = "✅ คำแนะนำและการดูแลเร่งด่วน";
+        }
+
+        // ส่ง Flex Message ส่วนตัวแยกตามระดับสีและดึง advice ที่ถูกต้องตามสีนั้น ๆ
         await liff.sendMessages([{
-          type: "text",
-          text: `ผลการประเมินสุขภาพใจ MindCare SDPY ของท่าน:\nสถานะ: ${iconSymbol} กลุ่ม${currentRiskColor}\nคำแนะนำ: ${finalPayload.advice}\n\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)`
+          type: "flex",
+          altText: "ผลการประเมินสุขภาพใจ MindCare SDPY",
+          contents: {
+            type: "bubble",
+            header: {
+              type: "box",
+              layout: "vertical",
+              backgroundColor: headerColor,
+              paddingAll: "15px",
+              contents: [
+                { type: "text", text: headerText, weight: "bold", color: "#FFFFFF", size: "sm", wrap: true }
+              ]
+            },
+            body: {
+              type: "box",
+              layout: "vertical",
+              spacing: "md",
+              contents: [
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: adviceHeading, weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: finalPayload.advice, size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "sm" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "✅ วิธีจัดการความเครียด / อารมณ์", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "sm" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "✅ ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "sm" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "✅ เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#047857" },
+                    { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาพทางอารมณ์อย่างต่อเนื่อง", size: "xs", color: "#334155", wrap: true }
+                  ]
+                },
+                { type: "separator", margin: "md" },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  spacing: "xs",
+                  contents: [
+                    { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#B91C1C" },
+                    { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
+                  ]
+                }
+              ]
+            }
+          }
         }]);
       } catch(e) {}
     }
