@@ -74,7 +74,7 @@
   <div class="content">
     <form id="evalForm">
       
-      <!-- ข้อมูลพื้นที่ (จะซ่อนอัตโนมัติเมื่อไปหน้า 9Q / 8Q) -->
+      <!-- ข้อมูลพื้นที่ -->
       <div id="tambonBox" class="tambon-container">
         <div class="tambon-title">📍 ข้อมูลพื้นที่อยู่อาศัย (อำเภอเวียงชัย)</div>
         <div class="input-group">
@@ -94,7 +94,7 @@
         </div>
       </div>
 
-      <!-- ส่วนที่ 1: แบบประเมิน 2Q -->
+      <!-- ส่วนที่ 1: 2Q -->
       <div id="step2q" class="step-section active">
         <div class="section-title">🔍 คัดกรองโรคซึมเศร้าเบื้องต้น (2Q)</div>
         <div class="section-desc">ใน 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านรู้สึก...</div>
@@ -115,7 +115,7 @@
         <button type="button" class="btn-submit" onclick="nextTo9Q()">ถัดไป / ตรวจสอบผล</button>
       </div>
 
-      <!-- ส่วนที่ 2: แบบประเมิน 9Q -->
+      <!-- ส่วนที่ 2: 9Q -->
       <div id="step9q" class="step-section">
         <div class="section-title">🌱 ส่วนที่ 2: แบบประเมินโรคซึมเศร้า (9Q)</div>
         <div class="section-desc">ในช่วง 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านมีอาการเหล่านี้บ่อยแค่ไหน?</div>
@@ -123,7 +123,7 @@
         <button type="button" class="btn-submit" onclick="nextTo8QOrSubmit()">ถัดไป / ส่งแบบประเมิน</button>
       </div>
 
-      <!-- ส่วนที่ 3: แบบประเมิน 8Q -->
+      <!-- ส่วนที่ 3: 8Q -->
       <div id="step8q" class="step-section">
         <div class="section-title">🛡️ ส่วนที่ 3: แบบประเมินความเสี่ยงต่อการฆ่าตัวตาย (8Q)</div>
         <div class="section-desc">ในช่วงที่ผ่านมา ท่านมีอาการหรือความคิดเหล่านี้หรือไม่?</div>
@@ -135,7 +135,7 @@
   </div>
 </div>
 
-<!-- Modal แจ้งเตือนแทน alert -->
+<!-- Modal แจ้งเตือน -->
 <div id="warningModal" class="modal">
   <div class="modal-content" style="max-width: 380px; text-align: center;">
     <div class="modal-title" style="color: #eab308; margin-bottom: 8px;">⚠️ แจ้งเตือนข้อความ</div>
@@ -160,6 +160,8 @@
 
   let currentRiskColor = "เขียว";
   let finalPayload = {};
+  let cachedUserId = "";
+  let cachedUserName = "ไม่ระบุชื่อ";
 
   const questions9Q = [
     "1. เบื่อไม่สนใจอยากทำอะไร",
@@ -230,7 +232,14 @@
   async function initializeLiff() {
     try {
       await liff.init({ liffId: LIFF_ID });
-      if (!liff.isLoggedIn()) { liff.login(); }
+      if (!liff.isLoggedIn()) { 
+        liff.login(); 
+      } else {
+        // ดึงข้อมูลโปรไฟล์ทันทีที่เข้าเว็บ
+        const profile = await liff.getProfile();
+        cachedUserId = profile.userId;
+        cachedUserName = profile.displayName;
+      }
     } catch (err) { console.error("LIFF Init Error:", err); }
   }
 
@@ -326,8 +335,8 @@
     else if (score9Q >= 13) risk9Q = "เหลือง";
 
     let risk8Q = "เขียว";
-    if (score8Q >= 9 || score9Q >= 19) risk8Q = "แดง";
-    else if (score8Q > 0 || score9Q >= 13) risk8Q = "เหลือง";
+    if (risk8Q >= 9 || score9Q >= 19) risk8Q = "แดง";
+    else if (risk8Q > 0 || score9Q >= 13) risk8Q = "เหลือง";
 
     if (risk8Q === "แดง" || risk9Q === "แดง") currentRiskColor = "แดง";
     else if (risk8Q === "เหลือง" || risk9Q === "เหลือง") currentRiskColor = "เหลือง";
@@ -368,22 +377,23 @@
     document.getElementById("modalContactText").innerHTML = contactTextModal;
     document.getElementById("resultModal").style.display = "flex";
 
-    let userName = "ไม่ระบุชื่อ";
-    let userId = "ไม่ระบุ ID";
+    // เผื่อกรณีดึงตอนโหลดไม่ทัน ให้ดึงซ้ำอีกรอบตอนกดส่ง
     try {
-      if (liff.isLoggedIn()) {
-        const idToken = liff.getDecodedIDToken();
-        userName = idToken ? (idToken.name || "ไม่ระบุ") : (await liff.getProfile()).displayName;
-        userId = idToken ? (idToken.sub || "ไม่ระบุ") : (await liff.getProfile()).userId;
+      if (liff.isLoggedIn() && !cachedUserId) {
+        const profile = await liff.getProfile();
+        cachedUserId = profile.userId;
+        cachedUserName = profile.displayName;
       }
     } catch(e) {}
 
     try {
+      // ส่งข้อมูลชื่อและ UserID ที่ถูกต้องไปให้ Google Apps Script
       await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
-          userId: `${userName} (${userId})`,
+          lineUserId: cachedUserId,
+          userName: cachedUserName,
           tambon: selectedTambon,
           moo: inputMoo,
           score: `2Q: ${finalPayload.score2Q}, 9Q: ${finalPayload.score9Q}, 8Q: ${finalPayload.score8Q}`,
@@ -396,140 +406,8 @@
     } catch(err) { console.error(err); }
   }
 
-  async function closeModalAndFinish() {
+  function closeModalAndFinish() {
     document.getElementById("resultModal").style.display = "none";
-    if (liff.isInClient()) {
-      try {
-        let headerColorHex = currentRiskColor === "เขียว" ? "#10B981" : (currentRiskColor === "เหลือง" ? "#F59E0B" : "#EF4444");
-        let headerText = currentRiskColor === "เขียว" ? "🟢 คุณมีสภาพจิตใจอยู่ในเกณฑ์ที่ดี" : (currentRiskColor === "เหลือง" ? "🟡 คุณมีภาวะเครียดหรืออารมณ์เหนื่อยล้าสะสม" : "🔴 คุณกำลังเผชิญความทุกข์ใจหรือมีความเครียดระดับสูง");
-        
-        let bodyContents = [];
-
-        if (currentRiskColor === "เขียว") {
-          bodyContents = [
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "✅ 1. คำแนะนำและความรู้ด้านสุขภาพจิต", weight: "bold", size: "xs", color: "#047857" },
-                { type: "text", text: finalPayload.advice, size: "xs", color: "#334155", wrap: true }
-              ]
-            },
-            { type: "separator", margin: "sm" },
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "✅ 2. วิธีจัดการความเครียด", weight: "bold", size: "xs", color: "#047857" },
-                { type: "text", text: "จัดเวลาพักผ่อน ออกกำลังกาย ฝึกหายใจลึกๆ ทำกิจกรรมที่ผ่อนคลาย และพูดคุยแลกเปลี่ยนกับคนใกล้ชิด", size: "xs", color: "#334155", wrap: true }
-              ]
-            },
-            { type: "separator", margin: "sm" },
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "✅ 3. ข้อมูลช่องทางติดต่อ", weight: "bold", size: "xs", color: "#047857" },
-                { type: "text", text: "บันทึกช่องทางปรึกษาหรือสายด่วนสุขภาพจิตไว้เพื่อขอคำปรึกษาได้ทันทีเมื่อเริ่มรู้สึกเครียด", size: "xs", color: "#334155", wrap: true }
-              ]
-            },
-            { type: "separator", margin: "sm" },
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "✅ 4. เฝ้าระวังและติดตามตามความเหมาะสม", weight: "bold", size: "xs", color: "#047857" },
-                { type: "text", text: "ทำแบบประเมินสุขภาพใจซ้ำเป็นประจำทุก 1-2 สัปดาห์ เพื่อประเมินและดูแลสุขภาพทางอารมณ์อย่างต่อเนื่อง", size: "xs", color: "#334155", wrap: true }
-              ]
-            },
-            { type: "separator", margin: "md" },
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#B91C1C" },
-                { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
-              ]
-            }
-          ];
-        } else if (currentRiskColor === "เหลือง") {
-          bodyContents = [
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: finalPayload.advice, size: "xs", color: "#334155", wrap: true }
-              ]
-            },
-            { type: "separator", margin: "md" },
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "🤝 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#D97706" },
-                { type: "text", text: "• รับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
-              ]
-            }
-          ];
-        } else {
-          bodyContents = [
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: finalPayload.advice, size: "xs", color: "#334155", wrap: true }
-              ]
-            },
-            { type: "separator", margin: "md" },
-            {
-              type: "box",
-              layout: "vertical",
-              spacing: "xs",
-              contents: [
-                { type: "text", text: "🚑 ช่องทางขอความช่วยเหลือทันที:", weight: "bold", size: "xs", color: "#DC2626" },
-                { type: "text", text: "• เข้ารับการปรึกษา/รักษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)\n• เจ็บป่วยฉุกเฉิน 1669 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true }
-              ]
-            }
-          ];
-        }
-
-        // สร้าง Flex Message แบบไม่มีแถบสีฉูดฉาด (ใช้ตัวหนังสือสีแทนการย้อมสีหัวการ์ด)
-        await liff.sendMessages([{
-          type: "flex",
-          altText: "ผลการประเมินสุขภาพใจ MindCare SDPY",
-          contents: {
-            type: "bubble",
-            body: {
-              type: "box",
-              layout: "vertical",
-              spacing: "md",
-              contents: [
-                {
-                  type: "box",
-                  layout: "horizontal",
-                  spacing: "sm",
-                  alignItems: "center",
-                  contents: [
-                    { type: "text", text: currentRiskColor === "เขียว" ? "🟢" : (currentRiskColor === "เหลือง" ? "🟡" : "🔴"), size: "md", flex: 0 },
-                    { type: "text", text: headerText.replace(/^[🟢🟡🔴]\s*/, ''), weight: "bold", color: headerColorHex, size: "sm", wrap: true, flex: 1 }
-                  ]
-                },
-                { type: "separator", margin: "md" },
-                ...bodyContents
-              ]
-            }
-          }
-        }]);
-      } catch(e) {}
-    }
     liff.closeWindow();
   }
 </script>
