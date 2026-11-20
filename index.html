@@ -463,7 +463,6 @@
         } 
         // เช็คเงื่อนไขสำหรับ "สีเขียว" (แบบ 4 ข้อคำแนะนำ พร้อมรหัสอ้างอิง)
         else {
-          let randomRefId = Math.floor(10000000000 + Math.random() * 90000000000);
           bubbleBodyContents = [
             {
               type: "box",
@@ -512,7 +511,6 @@
               contents: [
                 { type: "text", text: "📌 ช่องทางขอคำปรึกษาเพิ่มเติม:", weight: "bold", size: "xs", color: "#047857" },
                 { type: "text", text: "• รับการปรึกษาได้ที่โรงพยาบาลใกล้บ้าน\n• สายด่วนสุขภาพจิต 1323 (ฟรี 24 ชม.)", size: "xs", color: "#475569", wrap: true },
-                { type: "text", text: "(รหัสอ้างอิง: " + randomRefId + ")", size: "xxs", color: "#94A3B8", margin: "sm" }
               ]
             }
           ];
